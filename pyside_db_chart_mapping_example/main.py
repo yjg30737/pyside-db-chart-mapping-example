@@ -1,6 +1,6 @@
 import sys
 
-from PySide6.QtWidgets import QMainWindow
+from PySide6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QApplication
 
 from pyside_db_chart_mapping_example.chart import ChartWidget
 from pyside_db_chart_mapping_example.db import *
