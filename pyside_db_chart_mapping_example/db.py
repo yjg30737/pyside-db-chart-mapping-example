@@ -4,7 +4,7 @@ from PySide6.QtSql import QSqlTableModel, QSqlQuery, QSqlDatabase, QSqlRecord
 from PySide6.QtSvgWidgets import QSvgWidget
 from PySide6.QtWidgets import QTableView, QWidget, QHBoxLayout, QApplication, QLabel, QAbstractItemView, \
     QGridLayout, QLineEdit, QMessageBox, QStyledItemDelegate, QPushButton, QComboBox, QSpacerItem, QSizePolicy, \
-    QVBoxLayout
+    QVBoxLayout, QCheckBox
 from PySide6.QtCore import Qt, Signal, QSortFilterProxyModel
 
 
@@ -191,9 +191,13 @@ class DatabaseWidget(QWidget):
             self.__comboBox.addItem(items[i])
         self.__comboBox.currentIndexChanged.connect(self.__currentIndexChanged)
 
+        # set checkbox for check all items
+        checkBox = QCheckBox()
+        checkBox.setText('Check all')
+
         # set layout
         lay = QHBoxLayout()
-        lay.addWidget(lbl)
+        lay.addWidget(checkBox)
         lay.addSpacerItem(QSpacerItem(10, 10, QSizePolicy.MinimumExpanding))
         lay.addWidget(self.__searchBar)
         lay.addWidget(self.__comboBox)
@@ -204,6 +208,7 @@ class DatabaseWidget(QWidget):
         btnWidget.setLayout(lay)
 
         lay = QVBoxLayout()
+        lay.addWidget(lbl)
         lay.addWidget(btnWidget)
         lay.addWidget(self.__tableView)
 
