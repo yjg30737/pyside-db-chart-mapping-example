@@ -2,8 +2,8 @@ import sys
 
 from PySide6.QtWidgets import QMainWindow
 
-from practice.pyside_db_chart_mapping_example.chart import ChartWidget
-from practice.pyside_db_chart_mapping_example.db import *
+from pyside_db_chart_mapping_example.chart import ChartWidget
+from pyside_db_chart_mapping_example.db import *
 
 
 class Window(QMainWindow):
