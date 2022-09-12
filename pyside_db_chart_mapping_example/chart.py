@@ -19,6 +19,7 @@ class ChartWidget(QWidget):
 
         lay = QVBoxLayout()
         lay.addWidget(chartView)
+        lay.setContentsMargins(0, 0, 0, 0)
         self.setLayout(lay)
 
     def mapDb(self, db):

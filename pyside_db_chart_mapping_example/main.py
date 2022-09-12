@@ -1,6 +1,6 @@
 import sys
 
-from PySide6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QApplication
+from PySide6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QApplication, QSplitter
 
 from pyside_db_chart_mapping_example.chart import ChartWidget
 from pyside_db_chart_mapping_example.db import *
@@ -21,12 +21,11 @@ class Window(QMainWindow):
         chartWidget = ChartWidget()
         chartWidget.mapDb(dbWidget)
 
-        lay = QHBoxLayout()
-        lay.addWidget(dbWidget)
-        lay.addWidget(chartWidget)
-
-        mainWidget = QWidget()
-        mainWidget.setLayout(lay)
+        mainWidget = QSplitter()
+        mainWidget.addWidget(dbWidget)
+        mainWidget.addWidget(chartWidget)
+        mainWidget.setChildrenCollapsible(False)
+        mainWidget.setSizes([500, 500])
 
         self.setCentralWidget(mainWidget)
 
