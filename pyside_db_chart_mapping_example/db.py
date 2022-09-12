@@ -13,19 +13,18 @@ class InstantSearchBar(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.__initUi()
+
+    def __initUi(self):
         # search bar label
         self.__label = QLabel()
 
-        self._initUi()
-
-    def _initUi(self):
         self.__searchLineEdit = QLineEdit()
         self.__searchIcon = QSvgWidget()
         ps = QApplication.font().pointSize()
         self.__searchIcon.setFixedSize(ps * 1.5, ps * 1.5)
 
         self.__searchBar = QWidget()
-        self.__searchBar.setObjectName('searchBar')
 
         lay = QHBoxLayout()
         lay.addWidget(self.__searchIcon)
