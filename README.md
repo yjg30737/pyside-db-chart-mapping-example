@@ -9,19 +9,17 @@ Example of mapping database table and chart with PySide6
 
 ## Example
 ```python
-from pyside_db_chart_mapping_example.chart import *
+from PySide6.QtWidgets import QApplication
+from pyside_db_chart_mapping_example.main import Window
+
 
 if __name__ == "__main__":
     import sys
 
     app = QApplication(sys.argv)
-    if not createConnection():
-        sys.exit(1)
-    initTable()
-    addSample()
-    ex = Window()
-    ex.show()
-    app.exec()
+    window = Window()
+    window.show()
+    sys.exit(app.exec())
 ```
 
 Result
