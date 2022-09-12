@@ -1,10 +1,11 @@
 import os
 
-from PySide6.QtSql import QSqlTableModel, QSqlQuery, QSqlDatabase
+from PySide6.QtSql import QSqlTableModel, QSqlQuery, QSqlDatabase, QSqlRecord
 from PySide6.QtSvgWidgets import QSvgWidget
-from PySide6.QtWidgets import QTableView, QHeaderView, QWidget, QHBoxLayout, QApplication, QLabel, QAbstractItemView, \
-    QGridLayout, QLineEdit, QMessageBox
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import QTableView, QWidget, QHBoxLayout, QApplication, QLabel, QAbstractItemView, \
+    QGridLayout, QLineEdit, QMessageBox, QStyledItemDelegate, QPushButton, QComboBox, QSpacerItem, QSizePolicy, \
+    QVBoxLayout
+from PySide6.QtCore import Qt, Signal, QSortFilterProxyModel
 
 
 class InstantSearchBar(QWidget):
@@ -96,7 +97,33 @@ class InstantSearchBar(QWidget):
         self.__searchLineEdit.setFocus()
 
 
+# for search feature
+class FilterProxyModel(QSortFilterProxyModel):
+    def __init__(self):
+        super().__init__()
+        self.__searchedText = ''
+
+    @property
+    def searchedText(self):
+        return self.__searchedText
+
+    @searchedText.setter
+    def searchedText(self, value):
+        self.__searchedText = value
+        self.invalidateFilter()
+
+
+# for align text in every cell to center
+class AlignDelegate(QStyledItemDelegate):
+    def initStyleOption(self, option, index):
+        super().initStyleOption(option, index)
+        option.displayAlignment = Qt.AlignCenter
+
+
 class DatabaseWidget(QWidget):
+    added = Signal(QSqlRecord)
+    deleted = Signal(int)
+
     def __init__(self):
         super().__init__()
         self.__initUi()
@@ -119,9 +146,20 @@ class DatabaseWidget(QWidget):
             self.__model.setHeaderData(i, Qt.Horizontal, columnNames[i])
         self.__model.select()
 
+        # init the proxy model
+        self.__proxyModel = FilterProxyModel()
+
+        # set the table model as source model to make it enable to feature sort and filter function
+        self.__proxyModel.setSourceModel(self.__model)
+
         # set up the view
         self.__tableView = QTableView()
-        self.__tableView.setModel(self.__model)
+        self.__tableView.setModel(self.__proxyModel)
+
+        # align to center
+        delegate = AlignDelegate()
+        for i in range(self.__model.columnCount()):
+            self.__tableView.setItemDelegateForColumn(i, delegate)
 
         # set selection/resize policy
         self.__tableView.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -135,9 +173,78 @@ class DatabaseWidget(QWidget):
         # set current index as first record
         self.__tableView.setCurrentIndex(self.__tableView.model().index(0, 0))
 
-        lay = QGridLayout()
+        # add/delete buttons
+        addBtn = QPushButton('Add')
+        addBtn.clicked.connect(self.__add)
+        self.__delBtn = QPushButton('Delete')
+        self.__delBtn.clicked.connect(self.__delete)
+
+        # instant search bar
+        self.__searchBar = InstantSearchBar()
+        self.__searchBar.setPlaceHolder('Search...')
+        self.__searchBar.searched.connect(self.__showResult)
+
+        # combo box to make it enable to search by each column
+        self.__comboBox = QComboBox()
+        items = ['All'] + columnNames
+        for i in range(len(items)):
+            self.__comboBox.addItem(items[i])
+        self.__comboBox.currentIndexChanged.connect(self.__currentIndexChanged)
+
+        # set layout
+        lay = QHBoxLayout()
+        lay.addWidget(lbl)
+        lay.addSpacerItem(QSpacerItem(10, 10, QSizePolicy.MinimumExpanding))
+        lay.addWidget(self.__searchBar)
+        lay.addWidget(self.__comboBox)
+        lay.addWidget(addBtn)
+        lay.addWidget(self.__delBtn)
+        lay.setContentsMargins(0, 0, 0, 0)
+        btnWidget = QWidget()
+        btnWidget.setLayout(lay)
+
+        lay = QVBoxLayout()
+        lay.addWidget(btnWidget)
         lay.addWidget(self.__tableView)
+
         self.setLayout(lay)
+
+        # show default result (which means "show all")
+        self.__showResult('')
+
+    def __delBtnToggle(self):
+        self.__delBtn.setEnabled(self.__tableView.model().rowCount() > 0)
+
+    def __add(self):
+        r = self.__model.record()
+        r.setValue("name", '')
+        r.setValue("job", '')
+        r.setValue("email", '')
+        self.__model.insertRecord(-1, r)
+        self.__model.select()
+        self.__tableView.setCurrentIndex(self.__tableView.model().index(self.__tableView.model().rowCount() - 1, 0))
+        self.added.emit(r)
+        self.__tableView.edit(self.__tableView.currentIndex().siblingAtColumn(1))
+        self.__delBtnToggle()
+
+    def __delete(self):
+        r = self.__tableView.currentIndex().row()
+        id = self.__model.index(r, 0).data()
+        self.__model.removeRow(r)
+        self.__model.select()
+        self.__tableView.setCurrentIndex(self.__tableView.model().index(max(0, r - 1), 0))
+        self.deleted.emit(id)
+        self.__delBtnToggle()
+
+    def __showResult(self, text):
+        # index -1 will be read from all columns
+        # otherwise it will be read the current column number indicated by combobox
+        self.__proxyModel.setFilterKeyColumn(self.__comboBox.currentIndex() - 1)
+        # regular expression can be used
+        self.__proxyModel.setFilterRegularExpression(text)
+
+    def __currentIndexChanged(self, idx):
+        self.__showResult(self.__searchBar.getSearchBar().text())
 
     def getModel(self):
         return self.__model
