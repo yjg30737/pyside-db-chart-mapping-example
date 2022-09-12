@@ -122,8 +122,6 @@ class DatabaseWidget(QWidget):
         # set up the view
         self.__tableView = QTableView()
         self.__tableView.setModel(self.__model)
-        self.__tableView.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.__tableView.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         # set selection/resize policy
         self.__tableView.setSelectionBehavior(QAbstractItemView.SelectRows)
