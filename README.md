@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
 Result
 
-![image](https://user-images.githubusercontent.com/55078043/189555178-9da916c8-1cb2-4b05-b7d3-988a2655a087.png)
+![image](https://user-images.githubusercontent.com/55078043/189558342-6d680145-2de9-485f-a8f7-45d0e451de2f.png)
 
 ## See Also
 * <a href="https://github.com/yjg30737/pyside-database-chart-example">pyside-database-chart-example</a> - non-mapping version (i tried to map each other, but failed)
