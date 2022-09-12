@@ -25,6 +25,7 @@ class InstantSearchBar(QWidget):
         self.__searchIcon.setFixedSize(ps * 1.5, ps * 1.5)
 
         self.__searchBar = QWidget()
+        self.__searchBar.setObjectName('searchBar')
 
         lay = QHBoxLayout()
         lay.addWidget(self.__searchIcon)
