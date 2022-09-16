@@ -120,6 +120,37 @@ class AlignDelegate(QStyledItemDelegate):
         option.displayAlignment = Qt.AlignCenter
 
 
+class TableModel(QSqlTableModel):
+    def __init__(self, *args, **kwargs):
+        QSqlTableModel.__init__(self, *args, **kwargs)
+        self.__checkableData = {}
+
+    def flags(self, index):
+        fl = QSqlTableModel.flags(self, index)
+        if index.column() == 0:
+            fl |= Qt.ItemIsUserCheckable
+        return fl
+
+    def data(self, index, role=Qt.DisplayRole):
+        if role == Qt.CheckStateRole and (
+            self.flags(index) & Qt.ItemIsUserCheckable != Qt.NoItemFlags
+        ):
+            if index.row() not in self.__checkableData.keys():
+                self.setData(index, Qt.Unchecked, Qt.CheckStateRole)
+            return self.__checkableData[index.row()]
+        else:
+            return QSqlTableModel.data(self, index, role)
+
+    def setData(self, index, value, role=Qt.EditRole):
+        if role == Qt.CheckStateRole and (
+            self.flags(index) & Qt.ItemIsUserCheckable != Qt.NoItemFlags
+        ):
+            self.__checkableData[index.row()] = value
+            self.dataChanged.emit(index, index, (role,))
+            return True
+        return QSqlTableModel.setData(self, index, value, role)
+
+
 class DatabaseWidget(QWidget):
     added = Signal(QSqlRecord)
     deleted = Signal(int)
@@ -139,7 +170,7 @@ class DatabaseWidget(QWidget):
 
         # database table
         # set up the model
-        self.__model = QSqlTableModel(self)
+        self.__model = TableModel(self)
         self.__model.setTable(tableName)
         self.__model.setEditStrategy(QSqlTableModel.OnFieldChange)
         for i in range(len(columnNames)):
