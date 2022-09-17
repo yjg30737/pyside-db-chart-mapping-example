@@ -9,7 +9,7 @@ setup(
     packages=find_packages(),
     package_data={'pyside_db_chart_mapping_example.ico': ['search.svg'],
                   'pyside_db_chart_mapping_example.style': ['lineedit.css', 'search_bar.css', 'widget.css']},
-    description='Example of mapping database table and chart with PySide6',
+    description='PySide6 Example of mapping database table(QSqlTableModel based table view) and chart with QVBarModelMapper',
     url='https://github.com/yjg30737/pyside-db-chart-mapping-example.git',
     install_requires=[
         'PySide6'
