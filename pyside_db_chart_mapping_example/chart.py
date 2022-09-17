@@ -23,7 +23,7 @@ class ChartWidget(QWidget):
         self.setLayout(lay)
 
     def mapDb(self, db):
-        db.deleted.connect(self.__setChartData)
+        db.deleted.connect(self.__removeChartXCategory)
         model = db.getModel()
 
         series = QBarSeries()
@@ -45,6 +45,6 @@ class ChartWidget(QWidget):
         self.__chart.addAxis(axisY, Qt.AlignLeft)
         series.attachAxis(axisY)
 
-    def __setChartData(self, names):
+    def __removeChartXCategory(self, names):
         for name in names:
             self.__axisX.remove(name)
