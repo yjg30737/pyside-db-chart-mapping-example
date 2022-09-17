@@ -23,6 +23,7 @@ class ChartWidget(QWidget):
         self.setLayout(lay)
 
     def mapDb(self, db):
+        db.deleted.connect(self.__setChartData)
         model = db.getModel()
 
         series = QBarSeries()
@@ -35,12 +36,15 @@ class ChartWidget(QWidget):
         mapper.setModel(model)
         self.__chart.addSeries(series)
 
-        axisX = QBarCategoryAxis()
-        axisX.append(['Joe', 'Lara', 'David', 'Jane'])
-        self.__chart.addAxis(axisX, Qt.AlignBottom)
-        series.attachAxis(axisX)
+        self.__axisX = QBarCategoryAxis()
+        self.__axisX.append(['Joe', 'Lara', 'David', 'Jane'])
+        self.__chart.addAxis(self.__axisX, Qt.AlignBottom)
+        series.attachAxis(self.__axisX)
         axisY = QValueAxis()
         axisY.setTitleText('Score')
         self.__chart.addAxis(axisY, Qt.AlignLeft)
         series.attachAxis(axisY)
 
+    def __setChartData(self, names):
+        for name in names:
+            self.__axisX.remove(name)
