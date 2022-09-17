@@ -11,6 +11,7 @@ PySide6 Example of mapping database table(QSqlTableModel based tableview) and ch
 * You can add, delete the record in table.
 * If you want to delete more than one record, holding ctrl and select records one by one or holding shift and select records as consecutive range.
 * If you change the data in table, chart data will be changed as well.
+* 4 records are given by default to show how it works.
 
 ## Example
 ```python
