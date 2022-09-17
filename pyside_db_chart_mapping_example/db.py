@@ -4,7 +4,7 @@ from PySide6.QtSql import QSqlTableModel, QSqlQuery, QSqlDatabase, QSqlRecord
 from PySide6.QtSvgWidgets import QSvgWidget
 from PySide6.QtWidgets import QTableView, QWidget, QHBoxLayout, QApplication, QLabel, QAbstractItemView, \
     QGridLayout, QLineEdit, QMessageBox, QStyledItemDelegate, QPushButton, QComboBox, QSpacerItem, QSizePolicy, \
-    QVBoxLayout, QCheckBox
+    QVBoxLayout
 from PySide6.QtCore import Qt, Signal, QSortFilterProxyModel
 
 
@@ -120,50 +120,6 @@ class AlignDelegate(QStyledItemDelegate):
         option.displayAlignment = Qt.AlignCenter
 
 
-class TableModel(QSqlTableModel):
-
-    def __init__(self, *args, **kwargs):
-        QSqlTableModel.__init__(self, *args, **kwargs)
-        self.__checkableData = {}
-
-    def flags(self, index):
-        fl = QSqlTableModel.flags(self, index)
-        if index.column() == 0:
-            fl |= Qt.ItemIsUserCheckable
-        return fl
-
-    def data(self, index, role=Qt.DisplayRole):
-        if role == Qt.CheckStateRole and (
-            self.flags(index) & Qt.ItemIsUserCheckable != Qt.NoItemFlags
-        ):
-            if index.row() not in self.__checkableData.keys():
-                self.setData(index, Qt.Unchecked, Qt.CheckStateRole)
-            return self.__checkableData[index.row()]
-        else:
-            return QSqlTableModel.data(self, index, role)
-
-    def setData(self, index, value, role=Qt.EditRole):
-        if role == Qt.CheckStateRole and (
-            self.flags(index) & Qt.ItemIsUserCheckable != Qt.NoItemFlags
-        ):
-            self.__checkableData[index.row()] = value
-            self.dataChanged.emit(index, index, (role,))
-            return True
-        return QSqlTableModel.setData(self, index, value, role)
-
-    def getCheckedRows(self):
-        rows = []
-        for i in range(0, self.rowCount()):
-            idx = self.index(i, 0)
-            if self.data(idx, Qt.CheckStateRole) == 2:
-                rows.append(i)
-        return rows
-        # for i in range(self.rowCount()-1, -1, -1):
-        #     idx = self.index(i, 0)
-        #     if self.data(idx, Qt.CheckStateRole) == 2:
-        #         self.removeRow(i)
-
-
 class DatabaseWidget(QWidget):
     added = Signal(QSqlRecord)
     deleted = Signal(int)
@@ -183,7 +139,7 @@ class DatabaseWidget(QWidget):
 
         # database table
         # set up the model
-        self.__model = TableModel(self)
+        self.__model = QSqlTableModel(self)
         self.__model.setTable(tableName)
         self.__model.setEditStrategy(QSqlTableModel.OnFieldChange)
         for i in range(len(columnNames)):
@@ -208,7 +164,7 @@ class DatabaseWidget(QWidget):
         # set selection/resize policy
         self.__tableView.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.__tableView.resizeColumnsToContents()
-        self.__tableView.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.__tableView.setSelectionMode(QAbstractItemView.ExtendedSelection)
 
         # sort (ascending order by default)
         self.__tableView.setSortingEnabled(True)
@@ -235,14 +191,9 @@ class DatabaseWidget(QWidget):
             self.__comboBox.addItem(items[i])
         self.__comboBox.currentIndexChanged.connect(self.__currentIndexChanged)
 
-        # set checkbox for check all items
-        checkBox = QCheckBox()
-        checkBox.setText('Check all')
-        checkBox.toggled.connect(self.__allChecked)
-
         # set layout
         lay = QHBoxLayout()
-        lay.addWidget(checkBox)
+        lay.addWidget(lbl)
         lay.addSpacerItem(QSpacerItem(10, 10, QSizePolicy.MinimumExpanding))
         lay.addWidget(self.__searchBar)
         lay.addWidget(self.__comboBox)
@@ -253,7 +204,6 @@ class DatabaseWidget(QWidget):
         btnWidget.setLayout(lay)
 
         lay = QVBoxLayout()
-        lay.addWidget(lbl)
         lay.addWidget(btnWidget)
         lay.addWidget(self.__tableView)
 
@@ -265,11 +215,8 @@ class DatabaseWidget(QWidget):
         # init delete button enabled
         self.__delBtnToggle()
 
-        # delete button toggle
-        self.__model.dataChanged.connect(self.__delBtnToggle)
-
     def __delBtnToggle(self):
-        self.__delBtn.setEnabled(len(self.__model.getCheckedRows()) > 0)
+        self.__delBtn.setEnabled(len(self.__tableView.selectedIndexes()) > 0)
 
     def __add(self):
         r = self.__model.record()
@@ -284,7 +231,7 @@ class DatabaseWidget(QWidget):
         self.__delBtnToggle()
 
     def __delete(self):
-        rows = self.__model.getCheckedRows()
+        rows = [idx.row() for idx in self.__tableView.selectedIndexes()]
         for r_idx in rows:
             self.__model.removeRow(r_idx)
         self.__model.select()
@@ -306,11 +253,6 @@ class DatabaseWidget(QWidget):
 
     def __currentIndexChanged(self, idx):
         self.__showResult(self.__searchBar.getSearchBar().text())
-
-    def __allChecked(self, f):
-        for i in range(self.__model.rowCount()):
-            idx = self.__model.index(i, 0)
-            self.__model.setData(idx, 2 if f else 0, Qt.CheckStateRole)
 
     def getModel(self):
         return self.__model
