@@ -12,6 +12,7 @@ PySide6 Example of mapping database table(QSqlTableModel based tableview) and ch
 * If you want to delete more than one record, holding ctrl and select records one by one or holding shift and select records as consecutive range.
 * If you change the data in table, chart data will be changed as well.
 * 4 records are given by default to show how it works.
+* You can search the text in table with writing the text in search bar. Table will show the matched records, chart will be not influenced by search bar.
 
 ## Example
 ```python
