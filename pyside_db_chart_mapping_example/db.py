@@ -121,6 +121,7 @@ class AlignDelegate(QStyledItemDelegate):
 
 
 class TableModel(QSqlTableModel):
+
     def __init__(self, *args, **kwargs):
         QSqlTableModel.__init__(self, *args, **kwargs)
         self.__checkableData = {}
@@ -260,6 +261,12 @@ class DatabaseWidget(QWidget):
 
         # show default result (which means "show all")
         self.__showResult('')
+
+        # init delete button enabled
+        self.__delBtnToggle()
+
+        # delete button toggle
+        self.__model.dataChanged.connect(self.__delBtnToggle)
 
     def __delBtnToggle(self):
         self.__delBtn.setEnabled(len(self.__model.getCheckedRows()) > 0)
