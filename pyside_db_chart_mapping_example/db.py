@@ -122,7 +122,7 @@ class AlignDelegate(QStyledItemDelegate):
 
 class DatabaseWidget(QWidget):
     added = Signal(QSqlRecord)
-    deleted = Signal(int)
+    deleted = Signal(list)
 
     def __init__(self):
         super().__init__()
@@ -232,10 +232,15 @@ class DatabaseWidget(QWidget):
 
     def __delete(self):
         rows = [idx.row() for idx in self.__tableView.selectedIndexes()]
+        names = []
         for r_idx in rows:
+            name = self.__model.data(self.__model.index(r_idx, 1))
+            if name:
+                names.append(name)
             self.__model.removeRow(r_idx)
         self.__model.select()
         self.__tableView.setCurrentIndex(self.__tableView.model().index(max(0, rows[0] - 1), 0))
+        self.deleted.emit(names)
         self.__delBtnToggle()
 
         # old code being used (delete only one row)
@@ -276,7 +281,6 @@ def createConnection():
         return False
     return True
 
-
 def initTable():
     table = 'contacts'
 
@@ -301,7 +305,6 @@ def initTable():
         """
     )
     createTableQuery.exec()
-
 
 def addSample():
     table = 'contacts'
