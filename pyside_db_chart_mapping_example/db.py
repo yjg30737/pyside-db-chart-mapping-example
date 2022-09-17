@@ -121,7 +121,8 @@ class AlignDelegate(QStyledItemDelegate):
 
 
 class DatabaseWidget(QWidget):
-    added = Signal(QSqlRecord)
+    added = Signal(str)
+    updated = Signal(str, str)
     deleted = Signal(list)
 
     def __init__(self):
@@ -142,6 +143,7 @@ class DatabaseWidget(QWidget):
         self.__model = QSqlTableModel(self)
         self.__model.setTable(tableName)
         self.__model.setEditStrategy(QSqlTableModel.OnFieldChange)
+        self.__model.beforeUpdate.connect(self.__updated)
         for i in range(len(columnNames)):
             self.__model.setHeaderData(i, Qt.Horizontal, columnNames[i])
         self.__model.select()
@@ -226,9 +228,14 @@ class DatabaseWidget(QWidget):
         self.__model.insertRecord(-1, r)
         self.__model.select()
         self.__tableView.setCurrentIndex(self.__tableView.model().index(self.__tableView.model().rowCount() - 1, 0))
-        self.added.emit(r)
+        self.added.emit(r.value('name'))
         self.__tableView.edit(self.__tableView.currentIndex().siblingAtColumn(1))
         self.__delBtnToggle()
+
+    # todo update the axis successfully
+    def __updated(self, i, record):
+        name = self.__model.data(self.__model.index(i, 1))
+        self.updated.emit('', name)
 
     def __delete(self):
         rows = [idx.row() for idx in self.__tableView.selectedIndexes()]
@@ -281,6 +288,7 @@ def createConnection():
         return False
     return True
 
+
 def initTable():
     table = 'contacts'
 
@@ -305,6 +313,7 @@ def initTable():
         """
     )
     createTableQuery.exec()
+
 
 def addSample():
     table = 'contacts'
