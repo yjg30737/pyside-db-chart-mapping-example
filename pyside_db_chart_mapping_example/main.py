@@ -26,6 +26,9 @@ class Window(QMainWindow):
         mainWidget.addWidget(chartWidget)
         mainWidget.setChildrenCollapsible(False)
         mainWidget.setSizes([500, 500])
+        mainWidget.setHandleWidth(1)
+        mainWidget.setStyleSheet(
+            "QSplitterHandle {background-color: lightgray;}")
 
         self.setCentralWidget(mainWidget)
 
