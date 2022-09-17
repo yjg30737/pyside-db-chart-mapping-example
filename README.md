@@ -1,5 +1,5 @@
 # pyside-db-chart-mapping-example
-Example of mapping database table and chart with PySide6
+PySide6 Example of mapping database table(QSqlTableModel based tableview) and chart with QVBarModelMapper
 
 ## Requirements
 * PySide6
