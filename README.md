@@ -7,6 +7,10 @@ PySide6 Example of mapping database table(QSqlTableModel based tableview) and ch
 ## Setup
 `python -m pip install git+https://github.com/yjg30737/pyside-db-chart-mapping-example.git --upgrade`
 
+## Usage
+* You can add, delete the record in table.
+* If you want to delete more than one record, holding ctrl and select records one by one or holding shift and select records as consecutive range.
+
 ## Example
 ```python
 from PySide6.QtWidgets import QApplication
