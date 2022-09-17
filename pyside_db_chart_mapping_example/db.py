@@ -235,7 +235,10 @@ class DatabaseWidget(QWidget):
         for r_idx in rows:
             self.__model.removeRow(r_idx)
         self.__model.select()
+        self.__tableView.setCurrentIndex(self.__tableView.model().index(max(0, rows[0] - 1), 0))
         self.__delBtnToggle()
+
+        # old code being used (delete only one row)
         # r = self.__tableView.currentIndex().row()
         # id = self.__model.index(r, 0).data()
         # self.__model.removeRow(r)
@@ -273,6 +276,7 @@ def createConnection():
         return False
     return True
 
+
 def initTable():
     table = 'contacts'
 
@@ -297,6 +301,7 @@ def initTable():
         """
     )
     createTableQuery.exec()
+
 
 def addSample():
     table = 'contacts'
