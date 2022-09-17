@@ -150,6 +150,18 @@ class TableModel(QSqlTableModel):
             return True
         return QSqlTableModel.setData(self, index, value, role)
 
+    def getCheckedRows(self):
+        rows = []
+        for i in range(0, self.rowCount()):
+            idx = self.index(i, 0)
+            if self.data(idx, Qt.CheckStateRole) == 2:
+                rows.append(i)
+        return rows
+        # for i in range(self.rowCount()-1, -1, -1):
+        #     idx = self.index(i, 0)
+        #     if self.data(idx, Qt.CheckStateRole) == 2:
+        #         self.removeRow(i)
+
 
 class DatabaseWidget(QWidget):
     added = Signal(QSqlRecord)
@@ -250,7 +262,7 @@ class DatabaseWidget(QWidget):
         self.__showResult('')
 
     def __delBtnToggle(self):
-        self.__delBtn.setEnabled(self.__tableView.model().rowCount() > 0)
+        self.__delBtn.setEnabled(len(self.__model.getCheckedRows()) > 0)
 
     def __add(self):
         r = self.__model.record()
@@ -265,13 +277,18 @@ class DatabaseWidget(QWidget):
         self.__delBtnToggle()
 
     def __delete(self):
-        r = self.__tableView.currentIndex().row()
-        id = self.__model.index(r, 0).data()
-        self.__model.removeRow(r)
+        rows = self.__model.getCheckedRows()
+        for r_idx in rows:
+            self.__model.removeRow(r_idx)
         self.__model.select()
-        self.__tableView.setCurrentIndex(self.__tableView.model().index(max(0, r - 1), 0))
-        self.deleted.emit(id)
         self.__delBtnToggle()
+        # r = self.__tableView.currentIndex().row()
+        # id = self.__model.index(r, 0).data()
+        # self.__model.removeRow(r)
+        # self.__model.select()
+        # self.__tableView.setCurrentIndex(self.__tableView.model().index(max(0, r - 1), 0))
+        # self.deleted.emit(id)
+        # self.__delBtnToggle()
 
     def __showResult(self, text):
         # index -1 will be read from all columns
