@@ -27,4 +27,5 @@ Result
 ![image](https://user-images.githubusercontent.com/55078043/190842429-dcbc0a37-a70e-4d5b-a1be-97c48f9b2c56.png)
 
 ## See Also
-* <a href="https://github.com/yjg30737/pyside-database-chart-example">pyside-database-chart-example</a> - non-mapping version (i tried to map each other, but failed)
+* <a href="https://doc.qt.io/qt-6/qtcharts-barmodelmapper-example.html">BarModelMapper Example</a> - table(not sql-based table) and chart mapping example in Qt documentation
+* <a href="https://github.com/yjg30737/pyside-database-chart-example">pyside-database-chart-example</a> - non-mapping version (i tried to map each other on my own, but failed)
