@@ -225,6 +225,7 @@ class DatabaseWidget(QWidget):
         # set checkbox for check all items
         checkBox = QCheckBox()
         checkBox.setText('Check all')
+        checkBox.toggled.connect(self.__allChecked)
 
         # set layout
         lay = QHBoxLayout()
@@ -281,6 +282,11 @@ class DatabaseWidget(QWidget):
 
     def __currentIndexChanged(self, idx):
         self.__showResult(self.__searchBar.getSearchBar().text())
+
+    def __allChecked(self, f):
+        for i in range(self.__model.rowCount()):
+            idx = self.__model.index(i, 0)
+            self.__model.setData(idx, 2 if f else 0, Qt.CheckStateRole)
 
     def getModel(self):
         return self.__model
