@@ -87,6 +87,7 @@ class ChartWidget(QWidget):
         lay = QVBoxLayout()
         lay.addWidget(searchBar)
         lay.addWidget(self.__checkboxListWidget)
+        lay.setSpacing(0)
 
         leftWidget = QWidget()
         leftWidget.setLayout(lay)
