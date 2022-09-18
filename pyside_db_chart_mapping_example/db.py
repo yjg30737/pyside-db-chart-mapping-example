@@ -227,16 +227,23 @@ class DatabaseWidget(QWidget):
         self.__delBtn.setEnabled(len(self.__tableView.selectedIndexes()) > 0)
 
     def __add(self):
+        # add new record
         r = self.__model.record()
         r.setValue("name", '')
         r.setValue("job", '')
         r.setValue("email", '')
         self.__model.insertRecord(-1, r)
         self.__model.select()
-        self.__tableView.setCurrentIndex(self.__tableView.model().index(self.__tableView.model().rowCount() - 1, 0))
-        # temporary measurement
-        id = self.__model.rowCount()
+
+        # set new record as current index
+        newRecordIdx = self.__tableView.model().index(self.__tableView.model().rowCount() - 1, 0)
+        self.__tableView.setCurrentIndex(newRecordIdx)
+
+        # send add signal
+        id = newRecordIdx.data()
         self.__model.added.emit(id, r.value('name'))
+
+        # make the record editable right after being added
         self.__tableView.edit(self.__tableView.currentIndex().siblingAtColumn(1))
         self.__delBtnToggle()
 
