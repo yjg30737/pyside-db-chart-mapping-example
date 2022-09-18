@@ -78,15 +78,17 @@ class ChartWidget(QWidget):
         self.__idNameDict[id] = newName
 
     def __removeChartXCategory(self, names):
+        # get id related to each name
         idLst = []
         for id, name in self.__idNameDict.items():
             if name in names:
                 idLst.append(id)
+
+        # delete the key/value pair in dictionary and category in chart
         for id in idLst:
             name = self.__idNameDict[id]
             self.__axisX.remove(name)
             del self.__idNameDict[id]
         self.__mapper.setRowCount(self.__model.rowCount())
-        print(self.__axisX.categories())
 
 
