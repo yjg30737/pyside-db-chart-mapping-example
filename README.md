@@ -1,5 +1,7 @@
 # pyside-db-chart-mapping-example
-PySide6 Example of mapping database table(QSqlTableModel based tableview) and chart with QVBarModelMapper
+PySide6 example of mapping database table(QSqlTableModel based tableview) and chart with QVBarModelMapper.
+
+All basic CRUD feature of database mapped into chart(QChartView).
 
 ## Requirements
 * PySide6
@@ -8,9 +10,8 @@ PySide6 Example of mapping database table(QSqlTableModel based tableview) and ch
 `python -m pip install git+https://github.com/yjg30737/pyside-db-chart-mapping-example.git --upgrade`
 
 ## Usage
-* You can add, delete the record in table.
 * If you want to delete more than one record, holding ctrl and select records one by one or holding shift and select records as consecutive range.
-* If you change the data in table, chart data will be changed as well.
+* If you change the data in table, chart data will be changed as well. Try changing name, score 1~3 fields or adding/deleting the record. It works like a charm.
 * 4 records are given by default to show how it works.
 * You can search the text in table with writing the text in search bar. Table will show the matched records, chart will be not influenced by search bar.
 
