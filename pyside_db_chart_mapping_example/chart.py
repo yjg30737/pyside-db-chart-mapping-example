@@ -92,6 +92,7 @@ class ChartWidget(QWidget):
         leftWidget.setLayout(lay)
 
         self.__textBrowser = QTextBrowser()
+        self.__textBrowser.setPlaceholderText('Place the mouse cursor over one of the bars to see the bar info here')
 
         chartView = QChartView(self.__chart)
         chartView.setRenderHint(QPainter.Antialiasing)
@@ -196,7 +197,6 @@ class ChartWidget(QWidget):
         self.__mapper.setRowCount(self.__model.rowCount())
 
     def __seriesHovered(self, status, idx, barset):
-        print('__seriesHovered')
         hoveredSeriesInfo = f'''
         On the bar: {status}
         Index of barset: {idx}

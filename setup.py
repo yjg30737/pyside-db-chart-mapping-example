@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pyside-db-chart-mapping-example',
-    version='0.0.17',
+    version='0.0.18',
     author='Jung Gyu Yoon',
     author_email='yjg30737@gmail.com',
     license='MIT',
