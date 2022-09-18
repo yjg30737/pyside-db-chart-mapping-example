@@ -2,7 +2,10 @@ from PySide6.QtCharts import QChart, QChartView, QBarSeries, QVBarModelMapper, \
     QBarCategoryAxis, QValueAxis
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPainter
+from PySide6.QtSql import QSqlQuery
 from PySide6.QtWidgets import QVBoxLayout, QWidget
+
+from pyside_db_chart_mapping_example.db import SqlTableModel
 
 
 class ChartWidget(QWidget):
@@ -22,7 +25,7 @@ class ChartWidget(QWidget):
         lay.setContentsMargins(0, 0, 0, 0)
         self.setLayout(lay)
 
-    def mapDbModel(self, model):
+    def mapDbModel(self, model: SqlTableModel):
         model.added.connect(self.__addChartXCategory)
         model.updated.connect(self.__updateChartXCategory)
         model.deleted.connect(self.__removeChartXCategory)
@@ -37,8 +40,16 @@ class ChartWidget(QWidget):
         mapper.setModel(model)
         self.__chart.addSeries(series)
 
+        # get name attributes
+        getNameQuery = QSqlQuery()
+        getNameQuery.prepare(f'SELECT name FROM {model.tableName()}')
+        getNameQuery.exec()
+        nameLst = []
+        while getNameQuery.next():
+            nameLst.append(getNameQuery.value('name'))
+
         self.__axisX = QBarCategoryAxis()
-        self.__axisX.append(['Joe', 'Lara', 'David', 'Jane'])
+        self.__axisX.append(nameLst)
         self.__chart.addAxis(self.__axisX, Qt.AlignBottom)
         series.attachAxis(self.__axisX)
         axisY = QValueAxis()
