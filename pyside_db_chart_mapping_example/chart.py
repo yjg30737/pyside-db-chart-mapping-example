@@ -11,7 +11,12 @@ from pyside_db_chart_mapping_example.db import SqlTableModel
 class ChartWidget(QWidget):
     def __init__(self):
         super().__init__()
+        self.__initVal()
         self.__initUi()
+
+    def __initVal(self):
+        self.__idNameDict = {}
+        self.__model = SqlTableModel()
 
     def __initUi(self):
         self.__chart = QChart()
@@ -26,27 +31,31 @@ class ChartWidget(QWidget):
         self.setLayout(lay)
 
     def mapDbModel(self, model: SqlTableModel):
-        model.added.connect(self.__addChartXCategory)
-        model.updated.connect(self.__updateChartXCategory)
-        model.deleted.connect(self.__removeChartXCategory)
+        self.__model = model
+        self.__model.added.connect(self.__addChartXCategory)
+        self.__model.updated.connect(self.__updateChartXCategory)
+        self.__model.deleted.connect(self.__removeChartXCategory)
 
         series = QBarSeries()
         mapper = QVBarModelMapper(self)
         mapper.setFirstBarSetColumn(4)
         mapper.setLastBarSetColumn(6)
         mapper.setFirstRow(0)
-        mapper.setRowCount(model.rowCount())
+        mapper.setRowCount(self.__model.rowCount())
         mapper.setSeries(series)
-        mapper.setModel(model)
+        mapper.setModel(self.__model)
         self.__chart.addSeries(series)
 
         # get name attributes
         getNameQuery = QSqlQuery()
-        getNameQuery.prepare(f'SELECT name FROM {model.tableName()}')
+        getNameQuery.prepare(f'SELECT id, name FROM {self.__model.tableName()} order by ID')
         getNameQuery.exec()
         nameLst = []
         while getNameQuery.next():
-            nameLst.append(getNameQuery.value('name'))
+            name = getNameQuery.value('name')
+            id = getNameQuery.value('id')
+            self.__idNameDict[id] = name
+            nameLst.append(name)
 
         self.__axisX = QBarCategoryAxis()
         self.__axisX.append(nameLst)
@@ -57,14 +66,26 @@ class ChartWidget(QWidget):
         self.__chart.addAxis(axisY, Qt.AlignLeft)
         series.attachAxis(axisY)
 
-    def __addChartXCategory(self, name):
+    def __addChartXCategory(self, id, name):
+        self.__idNameDict[id] = name
         self.__axisX.append([name])
 
-    def __updateChartXCategory(self, oldName, newName):
+    def __updateChartXCategory(self, id, newName):
+        # get mapped name by id
+        oldName = self.__idNameDict[id]
         self.__axisX.replace(oldName, newName)
+        self.__idNameDict[id] = newName
 
     def __removeChartXCategory(self, names):
-        for name in names:
+        getIdByNameQuery = QSqlQuery()
+        getIdByNameQuery.prepare(f'SELECT id FROM {self.__model.tableName()} WHERE name IN {tuple(names)}')
+        getIdByNameQuery.exec()
+        idLst = []
+        while getIdByNameQuery.next():
+            idLst.append(getIdByNameQuery.value('id'))
+        for id in idLst:
+            name = self.__idNameDict[id]
             self.__axisX.remove(name)
+            del self.__idNameDict[id]
 
 

@@ -121,8 +121,8 @@ class AlignDelegate(QStyledItemDelegate):
 
 
 class SqlTableModel(QSqlTableModel):
-    added = Signal(str)
-    updated = Signal(str, str)
+    added = Signal(int, str)
+    updated = Signal(int, str)
     deleted = Signal(list)
 
     def __init__(self, *args, **kwargs):
@@ -234,14 +234,15 @@ class DatabaseWidget(QWidget):
         self.__model.insertRecord(-1, r)
         self.__model.select()
         self.__tableView.setCurrentIndex(self.__tableView.model().index(self.__tableView.model().rowCount() - 1, 0))
-        self.__model.added.emit(r.value('name'))
+        # temporary measurement
+        id = self.__model.rowCount()
+        self.__model.added.emit(id, r.value('name'))
         self.__tableView.edit(self.__tableView.currentIndex().siblingAtColumn(1))
         self.__delBtnToggle()
 
     # todo update the axis successfully
-    def __updated(self, i, record):
-        name = self.__model.data(self.__model.index(i, 1))
-        self.__model.updated.emit('', name)
+    def __updated(self, i, r):
+        self.__model.updated.emit(r.value('id'), r.value('name'))
 
     def __delete(self):
         rows = [idx.row() for idx in self.__tableView.selectedIndexes()]
@@ -309,7 +310,7 @@ def initTable():
         f"""
         CREATE TABLE {table} (
             id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
-            name VARCHAR(40) NOT NULL,
+            name VARCHAR(40) UNIQUE NOT NULL,
             job VARCHAR(50),
             email VARCHAR(40) NOT NULL,
             score1 INTEGER,
