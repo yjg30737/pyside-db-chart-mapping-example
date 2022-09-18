@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
 Result
 
-![image](https://user-images.githubusercontent.com/55078043/190900938-c1df353d-ff20-4226-acd5-42815622363d.png)
+![image](https://user-images.githubusercontent.com/55078043/190901130-9ee0a20e-18fa-4d68-b7f1-1d8c45fcbfda.png)
 
 ## See Also
 * <a href="https://doc.qt.io/qt-6/qtcharts-barmodelmapper-example.html">BarModelMapper Example</a> - table(not sql-based table) and chart mapping example in Qt documentation
