@@ -37,13 +37,13 @@ class ChartWidget(QWidget):
         self.__model.deleted.connect(self.__removeChartXCategory)
 
         series = QBarSeries()
-        mapper = QVBarModelMapper(self)
-        mapper.setFirstBarSetColumn(4)
-        mapper.setLastBarSetColumn(6)
-        mapper.setFirstRow(0)
-        mapper.setRowCount(self.__model.rowCount())
-        mapper.setSeries(series)
-        mapper.setModel(self.__model)
+        self.__mapper = QVBarModelMapper(self)
+        self.__mapper.setFirstBarSetColumn(4)
+        self.__mapper.setLastBarSetColumn(6)
+        self.__mapper.setFirstRow(0)
+        self.__mapper.setRowCount(self.__model.rowCount())
+        self.__mapper.setSeries(series)
+        self.__mapper.setModel(self.__model)
         self.__chart.addSeries(series)
 
         # get name attributes
@@ -69,6 +69,7 @@ class ChartWidget(QWidget):
     def __addChartXCategory(self, id, name):
         self.__idNameDict[id] = name
         self.__axisX.append([name])
+        self.__mapper.setRowCount(self.__model.rowCount())
 
     def __updateChartXCategory(self, id, newName):
         # get mapped name by id
@@ -77,15 +78,15 @@ class ChartWidget(QWidget):
         self.__idNameDict[id] = newName
 
     def __removeChartXCategory(self, names):
-        getIdByNameQuery = QSqlQuery()
-        getIdByNameQuery.prepare(f'SELECT id FROM {self.__model.tableName()} WHERE name IN {tuple(names)}')
-        getIdByNameQuery.exec()
         idLst = []
-        while getIdByNameQuery.next():
-            idLst.append(getIdByNameQuery.value('id'))
+        for id, name in self.__idNameDict.items():
+            if name in names:
+                idLst.append(id)
         for id in idLst:
             name = self.__idNameDict[id]
             self.__axisX.remove(name)
             del self.__idNameDict[id]
+        self.__mapper.setRowCount(self.__model.rowCount())
+        print(self.__axisX.categories())
 
 
