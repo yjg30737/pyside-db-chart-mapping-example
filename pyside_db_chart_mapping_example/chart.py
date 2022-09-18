@@ -82,6 +82,7 @@ class ChartWidget(QWidget):
         self.__checkboxListWidget = CheckBoxListWidget()
 
         searchBar = InstantSearchBar()
+        searchBar.setPlaceHolder('Search feature will be added later')
 
         lay = QVBoxLayout()
         lay.addWidget(searchBar)
@@ -90,14 +91,14 @@ class ChartWidget(QWidget):
         leftWidget = QWidget()
         leftWidget.setLayout(lay)
 
-        textBrowser = QTextBrowser()
+        self.__textBrowser = QTextBrowser()
 
         chartView = QChartView(self.__chart)
         chartView.setRenderHint(QPainter.Antialiasing)
 
         rightWidget = QSplitter()
         rightWidget.addWidget(chartView)
-        rightWidget.addWidget(textBrowser)
+        rightWidget.addWidget(self.__textBrowser)
         rightWidget.setOrientation(Qt.Vertical)
         rightWidget.setHandleWidth(1)
         rightWidget.setStyleSheet(
@@ -163,6 +164,9 @@ class ChartWidget(QWidget):
         self.__chart.addAxis(axisY, Qt.AlignLeft)
         series.attachAxis(axisY)
 
+        # set hover event to series
+        series.hovered.connect(self.__seriesHovered)
+
     def __addChartXCategory(self, id, name):
         self.__idNameDict[id] = name
         self.__axisX.append([name])
@@ -190,3 +194,15 @@ class ChartWidget(QWidget):
             self.__axisX.remove(name)
             del self.__idNameDict[id]
         self.__mapper.setRowCount(self.__model.rowCount())
+
+    def __seriesHovered(self, status, idx, barset):
+        print('__seriesHovered')
+        hoveredSeriesInfo = f'''
+        On the bar: {status}
+        Index of barset: {idx}
+        Barset object: {barset}
+        Barset object label: {barset.label()}
+        Barset object category: {self.__axisX.categories()[idx]}
+        Barset object value: {barset.at(idx)}
+        '''
+        self.__textBrowser.setText(hoveredSeriesInfo)
