@@ -80,7 +80,7 @@ class ChartWidget(QWidget):
     def __removeChartXCategory(self, names):
         # todo fix the bug
         #  incorrect row count of chart
-        #  when remove the first row or consecutive rows including first row
+        #  after removing the first row or consecutive rows including first
 
         # get id related to each name
         idLst = []
