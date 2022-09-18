@@ -69,6 +69,7 @@ class ChartWidget(QWidget):
     def __addChartXCategory(self, id, name):
         self.__idNameDict[id] = name
         self.__axisX.append([name])
+        self.__mapper.setRowCount(self.__model.rowCount())
 
     def __updateChartXCategory(self, id, newName):
         # get mapped name by id
@@ -88,5 +89,6 @@ class ChartWidget(QWidget):
             name = self.__idNameDict[id]
             self.__axisX.remove(name)
             del self.__idNameDict[id]
+        self.__mapper.setRowCount(self.__model.rowCount())
 
 
