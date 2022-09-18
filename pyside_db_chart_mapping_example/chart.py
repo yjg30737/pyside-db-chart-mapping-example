@@ -65,7 +65,6 @@ class CheckBoxListWidget(QListWidget):
             self.takeItem(i)
 
 
-
 class ChartWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -80,13 +79,13 @@ class ChartWidget(QWidget):
         self.__chart = QChart()
         self.__chart.setAnimationOptions(QChart.AllAnimations)
 
-        checkboxListWidget = CheckBoxListWidget()
+        self.__checkboxListWidget = CheckBoxListWidget()
 
         searchBar = InstantSearchBar()
 
         lay = QVBoxLayout()
         lay.addWidget(searchBar)
-        lay.addWidget(checkboxListWidget)
+        lay.addWidget(self.__checkboxListWidget)
 
         leftWidget = QWidget()
         leftWidget.setLayout(lay)
@@ -119,11 +118,13 @@ class ChartWidget(QWidget):
         self.setLayout(lay)
 
     def mapDbModel(self, model: SqlTableModel):
+        # set model and connect all events
         self.__model = model
         self.__model.added.connect(self.__addChartXCategory)
         self.__model.updated.connect(self.__updateChartXCategory)
         self.__model.deleted.connect(self.__removeChartXCategory)
 
+        # set mapper and series(bars on the chart)
         series = QBarSeries()
         self.__mapper = QVBarModelMapper(self)
         self.__mapper.setFirstBarSetColumn(4)
@@ -138,6 +139,8 @@ class ChartWidget(QWidget):
         getNameQuery = QSqlQuery()
         getNameQuery.prepare(f'SELECT id, name FROM {self.__model.tableName()} order by ID')
         getNameQuery.exec()
+
+        # get name attributes
         nameLst = []
         while getNameQuery.next():
             name = getNameQuery.value('name')
@@ -145,10 +148,16 @@ class ChartWidget(QWidget):
             self.__idNameDict[id] = name
             nameLst.append(name)
 
+        # set name attributes to list widget
+        self.__checkboxListWidget.addItems(nameLst)
+
+        # define axis X, set name attributes to it
         self.__axisX = QBarCategoryAxis()
         self.__axisX.append(nameLst)
         self.__chart.addAxis(self.__axisX, Qt.AlignBottom)
         series.attachAxis(self.__axisX)
+
+        # define axis Y
         axisY = QValueAxis()
         axisY.setTitleText('Score')
         self.__chart.addAxis(axisY, Qt.AlignLeft)
