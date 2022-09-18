@@ -247,11 +247,12 @@ class DatabaseWidget(QWidget):
         self.__tableView.edit(self.__tableView.currentIndex().siblingAtColumn(1))
         self.__delBtnToggle()
 
-    # todo update the axis successfully
     def __updated(self, i, r):
+        # send updated signal
         self.__model.updated.emit(r.value('id'), r.value('name'))
 
     def __delete(self):
+        # delete select rows(records)
         rows = [idx.row() for idx in self.__tableView.selectedIndexes()]
         names = []
         for r_idx in rows:
@@ -260,18 +261,13 @@ class DatabaseWidget(QWidget):
                 names.append(name)
             self.__model.removeRow(r_idx)
         self.__model.select()
+
+        # set previous row of first removed one as current index
         self.__tableView.setCurrentIndex(self.__tableView.model().index(max(0, rows[0] - 1), 0))
+
+        # send deleted signal
         self.__model.deleted.emit(names)
         self.__delBtnToggle()
-
-        # old code being used (delete only one row)
-        # r = self.__tableView.currentIndex().row()
-        # id = self.__model.index(r, 0).data()
-        # self.__model.removeRow(r)
-        # self.__model.select()
-        # self.__tableView.setCurrentIndex(self.__tableView.model().index(max(0, r - 1), 0))
-        # self.deleted.emit(id)
-        # self.__delBtnToggle()
 
     def __showResult(self, text):
         # index -1 will be read from all columns
