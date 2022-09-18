@@ -19,7 +19,8 @@ class Window(QMainWindow):
 
         dbWidget = DatabaseWidget()
         chartWidget = ChartWidget()
-        chartWidget.mapDb(dbWidget)
+        model = dbWidget.getModel()
+        chartWidget.mapDbModel(model)
 
         mainWidget = QSplitter()
         mainWidget.addWidget(dbWidget)

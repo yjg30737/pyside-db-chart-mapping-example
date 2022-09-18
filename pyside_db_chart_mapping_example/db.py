@@ -120,10 +120,16 @@ class AlignDelegate(QStyledItemDelegate):
         option.displayAlignment = Qt.AlignCenter
 
 
-class DatabaseWidget(QWidget):
+class SqlTableModel(QSqlTableModel):
     added = Signal(str)
     updated = Signal(str, str)
     deleted = Signal(list)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__()
+
+
+class DatabaseWidget(QWidget):
 
     def __init__(self):
         super().__init__()
@@ -140,7 +146,7 @@ class DatabaseWidget(QWidget):
 
         # database table
         # set up the model
-        self.__model = QSqlTableModel(self)
+        self.__model = SqlTableModel(self)
         self.__model.setTable(tableName)
         self.__model.setEditStrategy(QSqlTableModel.OnFieldChange)
         self.__model.beforeUpdate.connect(self.__updated)
@@ -228,14 +234,14 @@ class DatabaseWidget(QWidget):
         self.__model.insertRecord(-1, r)
         self.__model.select()
         self.__tableView.setCurrentIndex(self.__tableView.model().index(self.__tableView.model().rowCount() - 1, 0))
-        self.added.emit(r.value('name'))
+        self.__model.added.emit(r.value('name'))
         self.__tableView.edit(self.__tableView.currentIndex().siblingAtColumn(1))
         self.__delBtnToggle()
 
     # todo update the axis successfully
     def __updated(self, i, record):
         name = self.__model.data(self.__model.index(i, 1))
-        self.updated.emit('', name)
+        self.__model.updated.emit('', name)
 
     def __delete(self):
         rows = [idx.row() for idx in self.__tableView.selectedIndexes()]
@@ -247,7 +253,7 @@ class DatabaseWidget(QWidget):
             self.__model.removeRow(r_idx)
         self.__model.select()
         self.__tableView.setCurrentIndex(self.__tableView.model().index(max(0, rows[0] - 1), 0))
-        self.deleted.emit(names)
+        self.__model.deleted.emit(names)
         self.__delBtnToggle()
 
         # old code being used (delete only one row)

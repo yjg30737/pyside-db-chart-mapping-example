@@ -22,11 +22,10 @@ class ChartWidget(QWidget):
         lay.setContentsMargins(0, 0, 0, 0)
         self.setLayout(lay)
 
-    def mapDb(self, db):
-        db.added.connect(self.__addChartXCategory)
-        db.updated.connect(self.__updateChartXCategory)
-        db.deleted.connect(self.__removeChartXCategory)
-        model = db.getModel()
+    def mapDbModel(self, model):
+        model.added.connect(self.__addChartXCategory)
+        model.updated.connect(self.__updateChartXCategory)
+        model.deleted.connect(self.__removeChartXCategory)
 
         series = QBarSeries()
         mapper = QVBarModelMapper(self)
