@@ -78,6 +78,10 @@ class ChartWidget(QWidget):
         self.__idNameDict[id] = newName
 
     def __removeChartXCategory(self, names):
+        # todo fix the bug
+        #  incorrect row count of chart
+        #  when remove the first row or consecutive rows including first row
+
         # get id related to each name
         idLst = []
         for id, name in self.__idNameDict.items():
