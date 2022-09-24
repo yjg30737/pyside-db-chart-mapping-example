@@ -3,7 +3,8 @@ from PySide6.QtCharts import QChart, QChartView, QBarSeries, QVBarModelMapper, \
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QPainter
 from PySide6.QtSql import QSqlQuery
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QListWidget, QListWidgetItem, QTextBrowser, QSplitter, QCheckBox
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QListWidget, QListWidgetItem, QTextBrowser, QSplitter, QCheckBox, \
+    QFormLayout, QHBoxLayout, QLabel, QSpacerItem, QSizePolicy
 
 from pyside_db_chart_mapping_example.db import SqlTableModel
 
@@ -80,13 +81,23 @@ class ChartWidget(QWidget):
         self.__chart.setAnimationOptions(QChart.AllAnimations)
 
         self.__checkBoxListWidget = CheckBoxListWidget()
+        self.__checkBoxListWidget.checkedSignal.connect(self.__showSeries)
 
         allCheckBox = QCheckBox('Check all')
         allCheckBox.setChecked(True)
         allCheckBox.stateChanged.connect(self.__checkBoxListWidget.toggleState)
 
-        lay = QVBoxLayout()
+        lay = QHBoxLayout()
+        lay.addWidget(QLabel('BarSet'))
+        lay.addSpacerItem(QSpacerItem(10, 10, QSizePolicy.MinimumExpanding))
         lay.addWidget(allCheckBox)
+        lay.setContentsMargins(0, 0, 0, 0)
+
+        leftTopWidget = QWidget()
+        leftTopWidget.setLayout(lay)
+
+        lay = QVBoxLayout()
+        lay.addWidget(leftTopWidget)
         lay.addWidget(self.__checkBoxListWidget)
 
         leftWidget = QWidget()
@@ -128,20 +139,22 @@ class ChartWidget(QWidget):
         self.__model.deleted.connect(self.__removeChartXCategory)
 
         # set mapper and series(bars on the chart)
-        series = QBarSeries()
+        self.__series = QBarSeries()
         self.__mapper = QVBarModelMapper(self)
         self.__mapper.setFirstBarSetColumn(4)
         self.__mapper.setLastBarSetColumn(6)
         self.__mapper.setFirstRow(0)
         self.__mapper.setRowCount(self.__model.rowCount())
-        self.__mapper.setSeries(series)
+        self.__mapper.setSeries(self.__series)
         self.__mapper.setModel(self.__model)
-        self.__chart.addSeries(series)
+        self.__chart.addSeries(self.__series)
 
         # get name attributes
         getNameQuery = QSqlQuery()
         getNameQuery.prepare(f'SELECT id, name FROM {self.__model.tableName()} order by ID')
         getNameQuery.exec()
+
+        barsetLabelLst = [barset.label() for barset in self.__series.barSets()]
 
         # get name attributes
         nameLst = []
@@ -152,7 +165,7 @@ class ChartWidget(QWidget):
             nameLst.append(name)
 
         # set name attributes to list widget
-        self.__checkBoxListWidget.addItems(nameLst)
+        self.__checkBoxListWidget.addItems(barsetLabelLst)
 
         # check all items
         for i in range(self.__checkBoxListWidget.count()):
@@ -162,16 +175,16 @@ class ChartWidget(QWidget):
         self.__axisX = QBarCategoryAxis()
         self.__axisX.append(nameLst)
         self.__chart.addAxis(self.__axisX, Qt.AlignBottom)
-        series.attachAxis(self.__axisX)
+        self.__series.attachAxis(self.__axisX)
 
         # define axis Y
         axisY = QValueAxis()
         axisY.setTitleText('Score')
         self.__chart.addAxis(axisY, Qt.AlignLeft)
-        series.attachAxis(axisY)
+        self.__series.attachAxis(axisY)
 
         # set hover event to series
-        series.hovered.connect(self.__seriesHovered)
+        self.__series.hovered.connect(self.__seriesHovered)
 
     def __addChartXCategory(self, id, name):
         self.__idNameDict[id] = name
@@ -211,3 +224,7 @@ class ChartWidget(QWidget):
         Barset object value: {barset.at(idx)}
         '''
         self.__textBrowser.setText(hoveredSeriesInfo)
+
+    def __showSeries(self, idx, checked):
+        print([barset for barset in self.__series.barSets()])
+        print(idx, checked)
