@@ -32,10 +32,10 @@ class CheckBoxListWidget(QListWidget):
         super().addItem(item)
 
     def toggleState(self, state):
+        state = Qt.Checked if state == 2 else Qt.Unchecked
         for i in range(self.count()):
             item = self.item(i)
-            if item.checkState() != state:
-                item.setCheckState(state)
+            item.setCheckState(state)
 
     def getCheckedRows(self):
         return self.__getFlagRows(Qt.Checked)
@@ -79,14 +79,15 @@ class ChartWidget(QWidget):
         self.__chart = QChart()
         self.__chart.setAnimationOptions(QChart.AllAnimations)
 
-        self.__checkboxListWidget = CheckBoxListWidget()
+        self.__checkBoxListWidget = CheckBoxListWidget()
 
         allCheckBox = QCheckBox('Check all')
         allCheckBox.setChecked(True)
+        allCheckBox.stateChanged.connect(self.__checkBoxListWidget.toggleState)
 
         lay = QVBoxLayout()
         lay.addWidget(allCheckBox)
-        lay.addWidget(self.__checkboxListWidget)
+        lay.addWidget(self.__checkBoxListWidget)
 
         leftWidget = QWidget()
         leftWidget.setLayout(lay)
@@ -151,11 +152,11 @@ class ChartWidget(QWidget):
             nameLst.append(name)
 
         # set name attributes to list widget
-        self.__checkboxListWidget.addItems(nameLst)
+        self.__checkBoxListWidget.addItems(nameLst)
 
         # check all items
-        for i in range(self.__checkboxListWidget.count()):
-            self.__checkboxListWidget.item(i).setCheckState(Qt.Checked)
+        for i in range(self.__checkBoxListWidget.count()):
+            self.__checkBoxListWidget.item(i).setCheckState(Qt.Checked)
 
         # define axis X, set name attributes to it
         self.__axisX = QBarCategoryAxis()
