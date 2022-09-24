@@ -29,7 +29,6 @@ class CheckBoxListWidget(QListWidget):
         if isinstance(item, str):
             item = QListWidgetItem(item)
         item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-        item.setCheckState(Qt.Unchecked)
         super().addItem(item)
 
     def toggleState(self, state):
