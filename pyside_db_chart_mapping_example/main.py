@@ -107,7 +107,7 @@ class BarsetItemCheckWidget(CheckWidget):
         super().__init__('Barset')
 
 
-class AxisItemCheckWidget(CheckWidget):
+class CategoryCheckWidget(CheckWidget):
     def __init__(self):
         super().__init__('Categories')
 
@@ -124,15 +124,15 @@ class Window(QMainWindow):
         addSample()
 
         self.__barsetCheckListWidget = BarsetItemCheckWidget()
-        self.__barsetCheckListWidget.itemChecked.connect(self.__showSeriesItem)
+        self.__barsetCheckListWidget.itemChecked.connect(self.__refreshSeries)
 
-        self.__axisCheckListWidget = AxisItemCheckWidget()
-        self.__axisCheckListWidget.itemChecked.connect(self.__showAxisItem)
+        self.__categoryCheckListWidget = CategoryCheckWidget()
+        self.__categoryCheckListWidget.itemChecked.connect(self.__refreshCategory)
 
         leftWidget = QSplitter()
         leftWidget.setOrientation(Qt.Vertical)
         leftWidget.addWidget(self.__barsetCheckListWidget)
-        leftWidget.addWidget(self.__axisCheckListWidget)
+        leftWidget.addWidget(self.__categoryCheckListWidget)
         leftWidget.setChildrenCollapsible(False)
         leftWidget.setHandleWidth(1)
         leftWidget.setStyleSheet(
@@ -142,8 +142,8 @@ class Window(QMainWindow):
         chartWidget = ChartWidget()
         model = dbWidget.getModel()
         chartWidget.mapDbModel(model)
-        self.__barsetCheckListWidget.addItems(chartWidget.getBarsetsText())
-        self.__axisCheckListWidget.addItems(chartWidget.getAxisXText())
+        self.__barsetCheckListWidget.addItems(chartWidget.getBarsetsTextList())
+        self.__categoryCheckListWidget.addItems(chartWidget.getCategories())
 
         mainWidget = QSplitter()
         mainWidget.addWidget(leftWidget)
@@ -160,7 +160,7 @@ class Window(QMainWindow):
     # fixme
     #  Internal C++ object (PySide6.QtCharts.QBarSet) already deleted.
     #  Update the mapper to solve this problem
-    def __showSeriesItem(self, idx, checked):
+    def __refreshSeries(self, idx, checked):
         # itemText = self.__barsetCheckListWidget.getItem(idx).text()
         # for i in range(self.__model.rowCount()):
         #     if barset.label() == itemText:
@@ -172,7 +172,7 @@ class Window(QMainWindow):
         #             break
         pass
 
-    def __showAxisItem(self, idx, checked):
+    def __refreshCategory(self, idx, checked):
         # itemText = self.__axisCheckBoxListWidget.getItem(idx).text()
         # self.__axisX.categories()
         # barsets = [ for barset in self.__chart.axisX(self.__series)]

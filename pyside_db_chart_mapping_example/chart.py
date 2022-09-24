@@ -136,8 +136,8 @@ class ChartWidget(QWidget):
         '''
         self.__textBrowser.setText(hoveredSeriesInfo)
 
-    def getBarsetsText(self):
+    def getBarsetsTextList(self):
         return [barset.label() for barset in self.__series.barSets()]
 
-    def getAxisXText(self):
+    def getCategories(self):
         return self.__axisX.categories()
