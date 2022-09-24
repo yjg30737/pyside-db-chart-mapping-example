@@ -226,5 +226,11 @@ class ChartWidget(QWidget):
         self.__textBrowser.setText(hoveredSeriesInfo)
 
     def __showSeries(self, idx, checked):
-        print([barset for barset in self.__series.barSets()])
-        print(idx, checked)
+        itemText = self.__checkBoxListWidget.item(idx).text()
+        barsets = [barset for barset in self.__series.barSets()]
+        for barset in barsets:
+            if barset.label() == itemText:
+                if checked == Qt.Checked:
+                    self.__series.insert(idx, barset)
+                else:
+                    self.__series.remove(barset)
