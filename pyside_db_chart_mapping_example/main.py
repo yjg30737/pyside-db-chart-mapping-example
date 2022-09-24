@@ -139,17 +139,17 @@ class Window(QMainWindow):
             "QSplitterHandle {background-color: lightgray;}")
 
         dbWidget = DatabaseWidget()
-        chartWidget = ChartWidget()
+        self.__chartWidget = ChartWidget()
         model = dbWidget.getModel()
-        chartWidget.mapDbModel(model)
+        self.__chartWidget.mapDbModel(model)
 
-        self.__barsetCheckListWidget.addItems(chartWidget.getBarsetsTextList())
-        self.__categoryCheckListWidget.addItems(chartWidget.getCategories())
+        self.__barsetCheckListWidget.addItems(self.__chartWidget.getBarsetsTextList())
+        self.__categoryCheckListWidget.addItems(self.__chartWidget.getCategories())
 
         mainWidget = QSplitter()
         mainWidget.addWidget(leftWidget)
         mainWidget.addWidget(dbWidget)
-        mainWidget.addWidget(chartWidget)
+        mainWidget.addWidget(self.__chartWidget)
         mainWidget.setChildrenCollapsible(False)
         mainWidget.setSizes([200, 500, 600])
         mainWidget.setHandleWidth(1)
@@ -174,6 +174,7 @@ class Window(QMainWindow):
         pass
 
     def __refreshCategory(self, idx, checked):
+        self.__chartWidget.refreshCategory(idx, checked)
         # itemText = self.__axisCheckBoxListWidget.getItem(idx).text()
         # self.__axisX.categories()
         # barsets = [ for barset in self.__chart.axisX(self.__series)]
