@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QPainter
 from PySide6.QtSql import QSqlQuery
 from PySide6.QtWidgets import QVBoxLayout, QWidget, QListWidget, QListWidgetItem, QTextBrowser, QSplitter, QCheckBox, \
-    QFormLayout, QHBoxLayout, QLabel, QSpacerItem, QSizePolicy
+    QHBoxLayout, QLabel, QSpacerItem, QSizePolicy
 
 from pyside_db_chart_mapping_example.db import SqlTableModel
 
@@ -66,6 +66,80 @@ class CheckBoxListWidget(QListWidget):
             self.takeItem(i)
 
 
+class BarsetCheckListWidget(QWidget):
+    itemChecked = Signal(int, Qt.CheckState)
+
+    def __init__(self):
+        super().__init__()
+        self.__initUi()
+
+    def __initUi(self):
+        self.__checkBoxListWidget = CheckBoxListWidget()
+        self.__checkBoxListWidget.checkedSignal.connect(self.itemChecked)
+
+        self.__allCheckBox = QCheckBox('Check all')
+        self.__allCheckBox.stateChanged.connect(self.__checkBoxListWidget.toggleState)
+        self.__allCheckBox.setChecked(True)
+
+        lay = QHBoxLayout()
+        lay.addWidget(QLabel('BarSet'))
+        lay.addSpacerItem(QSpacerItem(10, 10, QSizePolicy.MinimumExpanding))
+        lay.addWidget(self.__allCheckBox)
+        lay.setContentsMargins(0, 0, 0, 0)
+
+        leftTopMenuWidget = QWidget()
+        leftTopMenuWidget.setLayout(lay)
+
+        lay = QVBoxLayout()
+        lay.addWidget(leftTopMenuWidget)
+        lay.addWidget(self.__checkBoxListWidget)
+
+        self.setLayout(lay)
+
+    def addItems(self, items: list):
+        for itemText in items:
+            item = QListWidgetItem(itemText)
+            item.setCheckState(self.__allCheckBox.checkState())
+            self.__checkBoxListWidget.addItem(item)
+
+
+class AxisItemCheckListWidget(QWidget):
+    itemChecked = Signal(int, Qt.CheckState)
+
+    def __init__(self):
+        super().__init__()
+        self.__initUi()
+
+    def __initUi(self):
+        self.__checkBoxListWidget = CheckBoxListWidget()
+        self.__checkBoxListWidget.checkedSignal.connect(self.itemChecked)
+
+        self.__allCheckBox = QCheckBox('Check all')
+        self.__allCheckBox.stateChanged.connect(self.__checkBoxListWidget.toggleState)
+        self.__allCheckBox.setChecked(True)
+
+        lay = QHBoxLayout()
+        lay.addWidget(QLabel('BarSet'))
+        lay.addSpacerItem(QSpacerItem(10, 10, QSizePolicy.MinimumExpanding))
+        lay.addWidget(self.__allCheckBox)
+        lay.setContentsMargins(0, 0, 0, 0)
+
+        leftTopMenuWidget = QWidget()
+        leftTopMenuWidget.setLayout(lay)
+
+        lay = QVBoxLayout()
+        lay.addWidget(leftTopMenuWidget)
+        lay.addWidget(self.__checkBoxListWidget)
+
+        self.setLayout(lay)
+
+    def addItems(self, items: list):
+        for itemText in items:
+            item = QListWidgetItem(itemText)
+            item.setCheckState(self.__allCheckBox.checkState())
+            self.__checkBoxListWidget.addItem(item)
+
+
 class ChartWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -81,58 +155,17 @@ class ChartWidget(QWidget):
         self.__chart.setAnimationOptions(QChart.AllAnimations)
 
         # left widget
-        ## left top widget
-        self.__barsetCheckBoxListWidget = CheckBoxListWidget()
-        self.__barsetCheckBoxListWidget.checkedSignal.connect(self.__showSeries)
-
-        barsetAllCheckBox = QCheckBox('Check all')
-        barsetAllCheckBox.setChecked(True)
-        barsetAllCheckBox.stateChanged.connect(self.__barsetCheckBoxListWidget.toggleState)
-
-        lay = QHBoxLayout()
-        lay.addWidget(QLabel('BarSet'))
-        lay.addSpacerItem(QSpacerItem(10, 10, QSizePolicy.MinimumExpanding))
-        lay.addWidget(barsetAllCheckBox)
-        lay.setContentsMargins(0, 0, 0, 0)
-
-        leftTopMenuWidget = QWidget()
-        leftTopMenuWidget.setLayout(lay)
-
-        lay = QVBoxLayout()
-        lay.addWidget(leftTopMenuWidget)
-        lay.addWidget(self.__barsetCheckBoxListWidget)
-
-        leftTopWidget = QWidget()
-        leftTopWidget.setLayout(lay)
+        self.__barsetCheckListWidget = BarsetCheckListWidget()
+        self.__barsetCheckListWidget.itemChecked.connect(self.__showSeries)
 
         ## left bottom widget
-        self.__axisCheckBoxListWidget = CheckBoxListWidget()
-        self.__axisCheckBoxListWidget.checkedSignal.connect(self.__showAxisItem)
-
-        axisAllCheckBox = QCheckBox('Check all')
-        axisAllCheckBox.setChecked(True)
-        axisAllCheckBox.stateChanged.connect(self.__axisCheckBoxListWidget.toggleState)
-
-        lay = QHBoxLayout()
-        lay.addWidget(QLabel('AxisX'))
-        lay.addSpacerItem(QSpacerItem(10, 10, QSizePolicy.MinimumExpanding))
-        lay.addWidget(axisAllCheckBox)
-        lay.setContentsMargins(0, 0, 0, 0)
-
-        leftBottomMenuWidget = QWidget()
-        leftBottomMenuWidget.setLayout(lay)
-
-        lay = QVBoxLayout()
-        lay.addWidget(leftBottomMenuWidget)
-        lay.addWidget(self.__axisCheckBoxListWidget)
-
-        leftBottomWidget = QWidget()
-        leftBottomWidget.setLayout(lay)
+        self.__axisCheckBoxListWidget = AxisItemCheckListWidget()
+        self.__axisCheckBoxListWidget.itemChecked.connect(self.__showAxisItem)
 
         leftWidget = QSplitter()
         leftWidget.setOrientation(Qt.Vertical)
-        leftWidget.addWidget(leftTopWidget)
-        leftWidget.addWidget(leftBottomWidget)
+        leftWidget.addWidget(self.__barsetCheckListWidget)
+        leftWidget.addWidget(self.__axisCheckBoxListWidget)
         leftWidget.setChildrenCollapsible(False)
         leftWidget.setHandleWidth(1)
         leftWidget.setStyleSheet(
@@ -192,11 +225,7 @@ class ChartWidget(QWidget):
         barsetLabelLst = [barset.label() for barset in self.__series.barSets()]
 
         # set name attributes to list widget
-        self.__barsetCheckBoxListWidget.addItems(barsetLabelLst)
-
-        # check all items
-        for i in range(self.__barsetCheckBoxListWidget.count()):
-            self.__barsetCheckBoxListWidget.item(i).setCheckState(Qt.Checked)
+        self.__barsetCheckListWidget.addItems(barsetLabelLst)
 
         # get name attributes
         nameLst = []
@@ -208,10 +237,6 @@ class ChartWidget(QWidget):
 
         # set name attributes to list widget
         self.__axisCheckBoxListWidget.addItems(nameLst)
-
-        # check all items
-        for i in range(self.__axisCheckBoxListWidget.count()):
-            self.__axisCheckBoxListWidget.item(i).setCheckState(Qt.Checked)
 
         # define axis X, set name attributes to it
         self.__axisX = QBarCategoryAxis()
