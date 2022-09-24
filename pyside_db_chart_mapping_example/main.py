@@ -65,11 +65,11 @@ class CheckBoxListWidget(QListWidget):
 class CheckWidget(QWidget):
     itemChecked = Signal(int, Qt.CheckState)
 
-    def __init__(self):
+    def __init__(self, label):
         super().__init__()
-        self.__initUi()
+        self.__initUi(label)
 
-    def __initUi(self):
+    def __initUi(self, label):
         self.__checkBoxListWidget = CheckBoxListWidget()
         self.__checkBoxListWidget.checkedSignal.connect(self.itemChecked)
 
@@ -78,7 +78,7 @@ class CheckWidget(QWidget):
         self.__allCheckBox.setChecked(True)
 
         lay = QHBoxLayout()
-        lay.addWidget(QLabel('BarSet'))
+        lay.addWidget(QLabel(label))
         lay.addSpacerItem(QSpacerItem(10, 10, QSizePolicy.MinimumExpanding))
         lay.addWidget(self.__allCheckBox)
         lay.setContentsMargins(0, 0, 0, 0)
@@ -104,12 +104,12 @@ class CheckWidget(QWidget):
 
 class BarsetItemCheckWidget(CheckWidget):
     def __init__(self):
-        super().__init__()
+        super().__init__('Barset')
 
 
 class AxisItemCheckWidget(CheckWidget):
     def __init__(self):
-        super().__init__()
+        super().__init__('Categories')
 
 
 class Window(QMainWindow):
