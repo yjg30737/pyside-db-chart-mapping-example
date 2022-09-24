@@ -142,6 +142,7 @@ class Window(QMainWindow):
         chartWidget = ChartWidget()
         model = dbWidget.getModel()
         chartWidget.mapDbModel(model)
+
         self.__barsetCheckListWidget.addItems(chartWidget.getBarsetsTextList())
         self.__categoryCheckListWidget.addItems(chartWidget.getCategories())
 
