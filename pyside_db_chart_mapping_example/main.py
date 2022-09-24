@@ -142,6 +142,8 @@ class Window(QMainWindow):
         chartWidget = ChartWidget()
         model = dbWidget.getModel()
         chartWidget.mapDbModel(model)
+        self.__barsetCheckListWidget.addItems(chartWidget.getBarsetsText())
+        self.__axisCheckListWidget.addItems(chartWidget.getAxisXText())
 
         mainWidget = QSplitter()
         mainWidget.addWidget(leftWidget)
