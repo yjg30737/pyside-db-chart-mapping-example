@@ -144,10 +144,11 @@ class Window(QMainWindow):
         chartWidget.mapDbModel(model)
 
         mainWidget = QSplitter()
+        mainWidget.addWidget(leftWidget)
         mainWidget.addWidget(dbWidget)
         mainWidget.addWidget(chartWidget)
         mainWidget.setChildrenCollapsible(False)
-        mainWidget.setSizes([400, 600])
+        mainWidget.setSizes([200, 500, 600])
         mainWidget.setHandleWidth(1)
         mainWidget.setStyleSheet(
             "QSplitterHandle {background-color: lightgray;}")
