@@ -3,9 +3,9 @@ from PySide6.QtCharts import QChart, QChartView, QBarSeries, QVBarModelMapper, \
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QPainter
 from PySide6.QtSql import QSqlQuery
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QListWidget, QListWidgetItem, QTextBrowser, QSplitter
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QListWidget, QListWidgetItem, QTextBrowser, QSplitter, QCheckBox
 
-from pyside_db_chart_mapping_example.db import SqlTableModel, InstantSearchBar
+from pyside_db_chart_mapping_example.db import SqlTableModel
 
 
 class CheckBoxListWidget(QListWidget):
@@ -81,13 +81,12 @@ class ChartWidget(QWidget):
 
         self.__checkboxListWidget = CheckBoxListWidget()
 
-        searchBar = InstantSearchBar()
-        searchBar.setPlaceHolder('Search feature will be added later')
+        allCheckBox = QCheckBox('Check all')
+        allCheckBox.setChecked(True)
 
         lay = QVBoxLayout()
-        lay.addWidget(searchBar)
+        lay.addWidget(allCheckBox)
         lay.addWidget(self.__checkboxListWidget)
-        lay.setSpacing(0)
 
         leftWidget = QWidget()
         leftWidget.setLayout(lay)
@@ -153,6 +152,10 @@ class ChartWidget(QWidget):
 
         # set name attributes to list widget
         self.__checkboxListWidget.addItems(nameLst)
+
+        # check all items
+        for i in range(self.__checkboxListWidget.count()):
+            self.__checkboxListWidget.item(i).setCheckState(Qt.Checked)
 
         # define axis X, set name attributes to it
         self.__axisX = QBarCategoryAxis()
