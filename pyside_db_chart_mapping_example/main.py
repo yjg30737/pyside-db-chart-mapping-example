@@ -186,6 +186,7 @@ class Window(QMainWindow):
         #             break
         pass
 
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     ex = Window()

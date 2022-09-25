@@ -1,5 +1,3 @@
-import os
-
 from PySide6.QtCharts import QChart, QChartView, QBarSeries, QVBarModelMapper, \
     QBarCategoryAxis, QValueAxis, QBarSet
 from PySide6.QtCore import Qt
