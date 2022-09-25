@@ -1,5 +1,6 @@
 import os
 
+from PySide6.QtGui import QIntValidator
 from PySide6.QtSql import QSqlTableModel, QSqlQuery, QSqlDatabase, QSqlRecord
 from PySide6.QtSvgWidgets import QSvgWidget
 from PySide6.QtWidgets import QTableView, QWidget, QHBoxLayout, QApplication, QLabel, QAbstractItemView, \
@@ -118,6 +119,14 @@ class AlignDelegate(QStyledItemDelegate):
     def initStyleOption(self, option, index):
         super().initStyleOption(option, index)
         option.displayAlignment = Qt.AlignCenter
+
+    def createEditor(self, parent, option, index):
+        editor = super().createEditor(parent, option, index)
+        c = index.column()
+        if c in range(4, 7):
+            validator = QIntValidator()
+            editor.setValidator(validator)
+        return editor
 
 
 class SqlTableModel(QSqlTableModel):
