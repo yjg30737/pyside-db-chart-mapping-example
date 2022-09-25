@@ -44,6 +44,6 @@ I'm struggling with the problem that item is not added more than one after table
 
 After much research i convince this is gotta be glitch.
 
-Don't want to report this to Qt however. Someone do it for me. 
+Don't want to report this to Qt however. Someone please do it for me. 
 
 I just want to figure it out on my own. 
