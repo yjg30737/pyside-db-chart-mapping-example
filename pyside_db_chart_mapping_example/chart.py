@@ -5,7 +5,7 @@ from PySide6.QtCharts import QChart, QChartView, QBarSeries, QVBarModelMapper, \
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPainter, QPixmap
 from PySide6.QtSql import QSqlQuery
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QTextBrowser, QSplitter, QPushButton
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QTextBrowser, QSplitter, QPushButton, QFileDialog
 
 from pyside_db_chart_mapping_example.db import SqlTableModel
 
@@ -39,7 +39,7 @@ class ChartWidget(QWidget):
             "QSplitterHandle {background-color: lightgray;}")
         mainWidget.setSizes([700, 300])
 
-        saveBtn = QPushButton('Save As PNG')
+        saveBtn = QPushButton('Save Chart As Image')
         saveBtn.clicked.connect(self.__save)
 
         lay = QVBoxLayout()
@@ -153,13 +153,17 @@ class ChartWidget(QWidget):
         self.__textBrowser.setText(hoveredSeriesInfo)
 
     def __save(self):
-        pixmap = QPixmap(self.__chartView.size())
-        p = QPainter()
-        p.begin(pixmap)
-        self.__chartView.render(p)
-        p.setRenderHint(QPainter.Antialiasing)
-        p.end()
-        pixmap.save(os.path.join(os.getcwd(), 'a.png'))
+        filename = QFileDialog.getSaveFileName(self, 'Save', '.', 'PNG (*.png);; JPEG (*.jpg;*.jpeg)')
+        ext = filename[1].split('(')[0].strip()
+        filename = filename[0]
+        if filename:
+            pixmap = QPixmap(self.__chartView.size())
+            p = QPainter()
+            p.begin(pixmap)
+            self.__chartView.render(p)
+            p.setRenderHint(QPainter.Antialiasing)
+            p.end()
+            pixmap.save(filename, ext)
 
     def getBarsetsTextList(self):
         return [barset.label() for barset in self.__series.barSets()]
