@@ -7,16 +7,16 @@ from pyside_db_chart_mapping_example.db import *
 
 
 class CheckBoxListWidget(QListWidget):
-    checkedSignal = Signal(str, Qt.CheckState)
+    checkedSignal = Signal(int, Qt.CheckState)
 
     def __init__(self):
         super().__init__()
         self.itemChanged.connect(self.__sendCheckedSignal)
 
     def __sendCheckedSignal(self, item):
-        text = item.text()
+        r_idx = self.row(item)
         state = item.checkState()
-        self.checkedSignal.emit(text, state)
+        self.checkedSignal.emit(r_idx, state)
 
     def addItems(self, items) -> None:
         for item in items:
@@ -63,7 +63,7 @@ class CheckBoxListWidget(QListWidget):
 
 
 class CheckWidget(QWidget):
-    itemChecked = Signal(str, Qt.CheckState)
+    itemChecked = Signal(int, Qt.CheckState)
 
     def __init__(self, label):
         super().__init__()
@@ -139,17 +139,17 @@ class Window(QMainWindow):
             "QSplitterHandle {background-color: lightgray;}")
 
         dbWidget = DatabaseWidget()
-        self.__chartWidget = ChartWidget()
-        self.__model = dbWidget.getModel()
-        self.__chartWidget.mapDbModel(self.__model)
+        chartWidget = ChartWidget()
+        model = dbWidget.getModel()
+        chartWidget.mapDbModel(model)
 
-        self.__barsetCheckListWidget.addItems(self.__chartWidget.getBarsetsTextList())
-        self.__categoryCheckListWidget.addItems(self.__chartWidget.getCategories())
+        self.__barsetCheckListWidget.addItems(chartWidget.getBarsetsTextList())
+        self.__categoryCheckListWidget.addItems(chartWidget.getCategories())
 
         mainWidget = QSplitter()
         mainWidget.addWidget(leftWidget)
         mainWidget.addWidget(dbWidget)
-        mainWidget.addWidget(self.__chartWidget)
+        mainWidget.addWidget(chartWidget)
         mainWidget.setChildrenCollapsible(False)
         mainWidget.setSizes([200, 500, 600])
         mainWidget.setHandleWidth(1)
@@ -158,21 +158,36 @@ class Window(QMainWindow):
 
         self.setCentralWidget(mainWidget)
 
-    def __refreshSeries(self, text, checked):
-        query = QSqlQuery()
-        query.prepare(f'SELECT * FROM contacts WHERE name != {text}')
-        query.exec()
+    # fixme
+    #  Internal C++ object (PySide6.QtCharts.QBarSet) already deleted.
+    #  Update the mapper to solve this problem
+    def __refreshSeries(self, idx, checked):
+        # itemText = self.__barsetCheckListWidget.getItem(idx).text()
+        # for i in range(self.__model.rowCount()):
+        #     if barset.label() == itemText:
+        #         if checked == Qt.Checked:
+        #             pass
+        #             # self.__series.insert(idx, barset)
+        #         else:
+        #             self.__series.remove(barset)
+        #             break
+        pass
 
-    def __refreshCategory(self, text, checked):
-        query = QSqlQuery()
-        query.prepare(f"SELECT * FROM contacts WHERE name = '{text}'")
-        query.exec()
-        self.__model.setQuery(query)
-
+    def __refreshCategory(self, idx, checked):
+        # itemText = self.__axisCheckBoxListWidget.getItem(idx).text()
+        # self.__axisX.categories()
+        # barsets = [ for barset in self.__chart.axisX(self.__series)]
+        # for barset in barsets:
+        #     if barset.label() == itemText:
+        #         if checked == Qt.Checked:
+        #             self.__series.insert(idx, barset)
+        #         else:
+        #             self.__series.remove(barset)
+        #             break
+        pass
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     ex = Window()
     ex.show()
     app.exec()
-
