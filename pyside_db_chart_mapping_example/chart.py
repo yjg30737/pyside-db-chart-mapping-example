@@ -1,9 +1,11 @@
+import os
+
 from PySide6.QtCharts import QChart, QChartView, QBarSeries, QVBarModelMapper, \
     QBarCategoryAxis, QValueAxis
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QPainter
+from PySide6.QtGui import QPainter, QPixmap
 from PySide6.QtSql import QSqlQuery
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QTextBrowser, QSplitter
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QTextBrowser, QSplitter, QPushButton
 
 from pyside_db_chart_mapping_example.db import SqlTableModel
 
@@ -25,11 +27,11 @@ class ChartWidget(QWidget):
         self.__textBrowser = QTextBrowser()
         self.__textBrowser.setPlaceholderText('Place the mouse cursor over one of the bars to see the bar info here')
 
-        chartView = QChartView(self.__chart)
-        chartView.setRenderHint(QPainter.Antialiasing)
+        self.__chartView = QChartView(self.__chart)
+        self.__chartView.setRenderHint(QPainter.Antialiasing)
 
         mainWidget = QSplitter()
-        mainWidget.addWidget(chartView)
+        mainWidget.addWidget(self.__chartView)
         mainWidget.addWidget(self.__textBrowser)
         mainWidget.setOrientation(Qt.Vertical)
         mainWidget.setHandleWidth(1)
@@ -37,7 +39,11 @@ class ChartWidget(QWidget):
             "QSplitterHandle {background-color: lightgray;}")
         mainWidget.setSizes([700, 300])
 
+        saveBtn = QPushButton('Save As PNG')
+        saveBtn.clicked.connect(self.__save)
+
         lay = QVBoxLayout()
+        lay.addWidget(saveBtn)
         lay.addWidget(mainWidget)
         lay.setContentsMargins(0, 0, 0, 0)
         self.setLayout(lay)
@@ -145,6 +151,15 @@ class ChartWidget(QWidget):
         Barset object value: {barset.at(idx)}
         '''
         self.__textBrowser.setText(hoveredSeriesInfo)
+
+    def __save(self):
+        pixmap = QPixmap(self.__chartView.size())
+        p = QPainter()
+        p.begin(pixmap)
+        self.__chartView.render(p)
+        p.setRenderHint(QPainter.Antialiasing)
+        p.end()
+        pixmap.save(os.path.join(os.getcwd(), 'a.png'))
 
     def getBarsetsTextList(self):
         return [barset.label() for barset in self.__series.barSets()]
