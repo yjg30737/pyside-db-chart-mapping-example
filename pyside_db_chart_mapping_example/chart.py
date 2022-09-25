@@ -65,11 +65,6 @@ class ChartWidget(QWidget):
         getNameQuery.prepare(f'SELECT id, name FROM {self.__model.tableName()} order by ID')
         getNameQuery.exec()
 
-        barsetLabelLst = [barset.label() for barset in self.__series.barSets()]
-
-        # set name attributes to list widget
-        # self.__barsetCheckListWidget.addItems(barsetLabelLst)
-
         # get name attributes
         nameLst = []
         while getNameQuery.next():
@@ -77,9 +72,6 @@ class ChartWidget(QWidget):
             id = getNameQuery.value('id')
             self.__idNameDict[id] = name
             nameLst.append(name)
-
-        # set name attributes to list widget
-        # self.__axisCheckBoxListWidget.addItems(nameLst)
 
         # define axis X, set name attributes to it
         self.__axisX = QBarCategoryAxis()
@@ -140,11 +132,3 @@ class ChartWidget(QWidget):
 
     def getCategories(self):
         return self.__axisX.categories()
-
-    def refreshCategory(self, idx, checked):
-        pass
-        # self.__axisX.setCategories()
-        # for i in range(len(self.__axisX.categories())):
-        #     if i == idx:
-        #
-        # self.__axisX.setCategories()
