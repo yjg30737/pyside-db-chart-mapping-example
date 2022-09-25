@@ -35,6 +35,8 @@ Result
 
 ![image](https://user-images.githubusercontent.com/55078043/192137474-9d927d19-c634-454f-b89e-d5d05fe824fe.png)
 
+You don't have to care about left check box list. I'm still working on it.
+
 ## See Also
 * <a href="https://doc.qt.io/qt-6/qtcharts-barmodelmapper-example.html">BarModelMapper Example</a> - table(not sql-based table) and chart mapping example in Qt documentation
 * <a href="https://github.com/yjg30737/pyside-database-chart-example">pyside-database-chart-example</a> - non-mapping version (i tried to map each other on my own, but failed)
