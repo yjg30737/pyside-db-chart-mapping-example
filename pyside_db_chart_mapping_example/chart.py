@@ -1,10 +1,9 @@
 from PySide6.QtCharts import QChart, QChartView, QBarSeries, QVBarModelMapper, \
     QBarCategoryAxis, QValueAxis
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QPainter
 from PySide6.QtSql import QSqlQuery
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QListWidget, QListWidgetItem, QTextBrowser, QSplitter, QCheckBox, \
-    QHBoxLayout, QLabel, QSpacerItem, QSizePolicy
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QTextBrowser, QSplitter
 
 from pyside_db_chart_mapping_example.db import SqlTableModel
 
@@ -126,12 +125,23 @@ class ChartWidget(QWidget):
         self.__mapper.setRowCount(self.__model.rowCount())
 
     def __seriesHovered(self, status, idx, barset):
+        category = self.__axisX.categories()[idx]
+        query = QSqlQuery()
+        query.prepare(f"SELECT * FROM contacts WHERE name = \'{category}\'")
+        query.exec()
+        job = email = ''
+        while query.next():
+            job = query.value('job')
+            email = query.value('email')
+
         hoveredSeriesInfo = f'''
         On the bar: {status}
         Index of barset: {idx}
         Barset object: {barset}
         Barset object label: {barset.label()}
-        Barset object category: {self.__axisX.categories()[idx]}
+        Barset object category: {category}
+        Barset object job: {job}
+        Barset object email: {email}
         Barset object value: {barset.at(idx)}
         '''
         self.__textBrowser.setText(hoveredSeriesInfo)
