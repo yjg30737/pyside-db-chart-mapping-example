@@ -1,9 +1,9 @@
 import os
 
 from PySide6.QtCharts import QChart, QChartView, QBarSeries, QVBarModelMapper, \
-    QBarCategoryAxis, QValueAxis
+    QBarCategoryAxis, QValueAxis, QBarSet
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QPainter, QPixmap
+from PySide6.QtGui import QPainter, QPixmap, QColor
 from PySide6.QtSql import QSqlQuery
 from PySide6.QtWidgets import QVBoxLayout, QWidget, QTextBrowser, QSplitter, QPushButton, QFileDialog
 
@@ -130,27 +130,35 @@ class ChartWidget(QWidget):
             del self.__idNameDict[id]
         self.__mapper.setRowCount(self.__model.rowCount())
 
-    def __seriesHovered(self, status, idx, barset):
-        category = self.__axisX.categories()[idx]
-        query = QSqlQuery()
-        query.prepare(f"SELECT * FROM contacts WHERE name = \'{category}\'")
-        query.exec()
-        job = email = ''
-        while query.next():
-            job = query.value('job')
-            email = query.value('email')
+    def __seriesHovered(self, status, idx, barset: QBarSet):
+        if status:
+            pen = barset.pen()
+            pen.setColor(QColor(255, 0, 0))
+            barset.setPen(pen)
+            category = self.__axisX.categories()[idx]
+            query = QSqlQuery()
+            query.prepare(f"SELECT * FROM contacts WHERE name = \'{category}\'")
+            query.exec()
+            job = email = ''
+            while query.next():
+                job = query.value('job')
+                email = query.value('email')
 
-        hoveredSeriesInfo = f'''
-        On the bar: {status}
-        Index of barset: {idx}
-        Barset object: {barset}
-        Barset object label: {barset.label()}
-        Barset object category: {category}
-        Barset object job: {job}
-        Barset object email: {email}
-        Barset object value: {barset.at(idx)}
-        '''
-        self.__textBrowser.setText(hoveredSeriesInfo)
+            hoveredSeriesInfo = f'''
+            Index of barset: {idx}
+            Barset object: {barset}
+            Barset object label: {barset.label()}
+            Barset object category: {category}
+            Barset object job: {job}
+            Barset object email: {email}
+            Barset object value: {barset.at(idx)}
+            '''
+            self.__textBrowser.setText(hoveredSeriesInfo)
+        else:
+            pen = barset.pen()
+            pen.setColor(QColor.fromHsvF(0.555833, 0.000000, 1.000000, 1.000000))
+            barset.setPen(pen)
+            self.__textBrowser.clear()
 
     def __save(self):
         filename = QFileDialog.getSaveFileName(self, 'Save', '.', 'PNG (*.png);; JPEG (*.jpg;*.jpeg)')
