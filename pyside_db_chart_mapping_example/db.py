@@ -1,4 +1,5 @@
 import os
+from typing import Union
 
 from PySide6.QtGui import QIntValidator
 from PySide6.QtSql import QSqlTableModel, QSqlQuery, QSqlDatabase, QSqlRecord
@@ -6,7 +7,7 @@ from PySide6.QtSvgWidgets import QSvgWidget
 from PySide6.QtWidgets import QTableView, QWidget, QHBoxLayout, QApplication, QLabel, QAbstractItemView, \
     QGridLayout, QLineEdit, QMessageBox, QStyledItemDelegate, QPushButton, QComboBox, QSpacerItem, QSizePolicy, \
     QVBoxLayout
-from PySide6.QtCore import Qt, Signal, QSortFilterProxyModel
+from PySide6.QtCore import Qt, Signal, QSortFilterProxyModel, QModelIndex, QPersistentModelIndex
 
 
 class InstantSearchBar(QWidget):
@@ -136,6 +137,11 @@ class SqlTableModel(QSqlTableModel):
 
     def __init__(self, *args, **kwargs):
         super().__init__()
+        
+    def flags(self, index: Union[QModelIndex, QPersistentModelIndex]) -> Qt.ItemFlags:
+        if index.column() == 0:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        return super().flags(index)
 
 
 class DatabaseWidget(QWidget):
