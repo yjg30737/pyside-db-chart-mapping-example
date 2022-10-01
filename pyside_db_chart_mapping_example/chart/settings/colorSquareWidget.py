@@ -1,9 +1,8 @@
-import math, colorsys
+import math, colorsys, os
 
 from PySide6.QtWidgets import QWidget, QGridLayout, QLabel
 
 from PySide6.QtCore import Qt, QPoint, Signal, QRect
-from pyqt_resource_helper import PyQtResourceHelper
 
 
 class ColorSquareWidget(QWidget):
@@ -32,7 +31,8 @@ class ColorSquareWidget(QWidget):
         ''')
 
         self.__blackOverlay = QWidget()
-        PyQtResourceHelper.setStyleSheet([self.__blackOverlay], ['style/black_overlay.css'])
+        with open(os.path.join(os.path.dirname(__file__), '../../style/black_overlay.css'), 'r') as f:
+            self.__blackOverlay.setStyleSheet(f.read())
 
         self.__blackOverlay.mouseMoveEvent = self.__moveSelectorByCursor
         self.__blackOverlay.mousePressEvent = self.__moveSelectorByCursor
@@ -44,14 +44,15 @@ class ColorSquareWidget(QWidget):
                                     math.floor(self.__selector_diameter / 2) * -1,
                                     self.__selector_diameter,
                                     self.__selector_diameter)
-        PyQtResourceHelper.setStyleSheet([self.__selector], ['style/color_selector.css'])
+        with open(os.path.join(os.path.dirname(__file__), '../../style/color_selector.css'), 'r') as f:
+            self.__selector.setStyleSheet(f.read())
 
         self.__blackRingInsideSelector = QLabel(self.__selector)
         self.__blackRingInsideSelector_diameter = self.__selector_diameter - 2
         self.__blackRingInsideSelector.setGeometry(QRect(1, 1, self.__blackRingInsideSelector_diameter,
                                                          self.__blackRingInsideSelector_diameter))
-
-        PyQtResourceHelper.setStyleSheet([self.__blackRingInsideSelector], ['style/black_ring_of_color_selector.css'])
+        with open(os.path.join(os.path.dirname(__file__), '../../style/black_ring_of_color_selector.css'), 'r') as f:
+            self.__blackRingInsideSelector.setStyleSheet(f.read())
 
         lay = QGridLayout()
         lay.addWidget(self.__colorView, 0, 0, 1, 1)

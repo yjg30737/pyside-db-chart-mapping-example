@@ -1,8 +1,7 @@
-import math, colorsys
+import math, colorsys, os
 
 from PySide6.QtCore import QPoint, Qt, Signal
 from PySide6.QtWidgets import QWidget, QLabel
-from pyqt_resource_helper import PyQtResourceHelper
 
 
 class ColorHueBarWidget(QWidget):
@@ -22,17 +21,20 @@ class ColorHueBarWidget(QWidget):
         self.__hue_selector_moving_range = self.__hue_bar_height-self.__hue_selector_height
 
         hueFrame = QWidget(self)
-        PyQtResourceHelper.setStyleSheet([hueFrame], ['style/hue_frame.css'])
+        with open(os.path.join(os.path.dirname(__file__), '../../style/hue_frame.css'), 'r') as f:
+            hueFrame.setStyleSheet(f.read())
 
         hueBg = QWidget(hueFrame)
         hueBg.setFixedWidth(self.__hue_bar_width)
         hueBg.setMinimumHeight(self.__hue_bar_height)
-        PyQtResourceHelper.setStyleSheet([hueBg], ['style/hue_bg.css'])
+        with open(os.path.join(os.path.dirname(__file__), '../../style/hue_bg.css'), 'r') as f:
+            hueBg.setStyleSheet(f.read())
 
         self.__hue_selector = QLabel(hueFrame)
         self.__hue_selector.setGeometry(0, 0, self.__hue_bar_width, self.__hue_selector_height)
         self.__hue_selector.setMinimumSize(self.__hue_bar_width, 0)
-        PyQtResourceHelper.setStyleSheet([self.__hue_selector], ['style/hue_selector.css'])
+        with open(os.path.join(os.path.dirname(__file__), '../../style/hue_selector.css'), 'r') as f:
+            self.__hue_selector.setStyleSheet(f.read())
 
         hueFrame.mouseMoveEvent = self.__moveSelectorByCursor
         hueFrame.mousePressEvent = self.__moveSelectorByCursor
