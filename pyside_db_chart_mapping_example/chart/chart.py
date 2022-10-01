@@ -2,99 +2,14 @@ import typing
 
 from PySide6.QtCharts import QChart, QChartView, QBarSeries, QVBarModelMapper, \
     QBarCategoryAxis, QValueAxis, QBarSet
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QPainter, QPixmap, QColor
 from PySide6.QtSql import QSqlQuery
 from PySide6.QtWidgets import QVBoxLayout, QWidget, QTextBrowser, QSplitter, QPushButton, QFileDialog, QHBoxLayout, \
-    QLabel, QGroupBox, QFormLayout, QSpacerItem, QSizePolicy, QDialog
+    QSpacerItem, QSizePolicy, QDialog
 
-from pyside_db_chart_mapping_example.db import SqlTableModel
-
-
-class ColorButton(QPushButton):
-    colorChanged = Signal(QColor)
-
-    def __init__(self, size=20, r=255, g=255, b=255):
-        super().__init__()
-        self.__initVal(size, r, g, b)
-        self.__initUi()
-
-    def __initVal(self, size, r, g, b):
-        self.__color = QColor(r, g, b)
-        self.__size = size
-
-    def __initUi(self):
-        self.setFixedSize(self.__size, self.__size)
-        self.__initStyle()
-
-    def setColor(self, rgb):
-        if isinstance(rgb, tuple):
-            r = int(rgb[0])
-            g = int(rgb[1])
-            b = int(rgb[2])
-            self.__color = QColor(r, g, b)
-        elif isinstance(rgb, QColor):
-            self.__color = rgb
-        self.__initStyle()
-        self.colorChanged.emit(self.__color)
-
-    def getColor(self):
-        return self.__color
-
-    def __initStyle(self):
-        self.setStyleSheet(f'''
-                            QPushButton 
-                            {{
-                            border-width:1px; 
-                            border-radius: {str(self.__size//2)};
-                            background-color: {self.__color.name()}; 
-                            }}
-                            '''
-                            )
-
-
-class SettingsDialog(QDialog):
-    def __init__(self):
-        super().__init__()
-        self.__initUi()
-
-    def __initUi(self):
-        hoverColorBtn = ColorButton()
-        selectColorBtn = ColorButton()
-
-        lay = QFormLayout()
-        lay.addRow('Bar border\'s color when cursor is hovering on it', hoverColorBtn)
-        lay.addRow('Selected bar\'s color', selectColorBtn)
-
-        settingsGrpBox = QGroupBox()
-        settingsGrpBox.setTitle('Chart Settings')
-        settingsGrpBox.setLayout(lay)
-
-        lay = QVBoxLayout()
-        lay.addWidget(settingsGrpBox)
-
-        topWidget = QWidget()
-        topWidget.setLayout(lay)
-
-        okBtn = QPushButton('OK')
-        okBtn.clicked.connect(self.accept)
-
-        closeBtn = QPushButton('Close')
-        closeBtn.clicked.connect(self.close)
-
-        lay = QHBoxLayout()
-        lay.addWidget(okBtn)
-        lay.addWidget(closeBtn)
-        lay.setContentsMargins(0, 0, 0, 0)
-
-        bottomWidget = QWidget()
-        bottomWidget.setLayout(lay)
-
-        lay = QVBoxLayout()
-        lay.addWidget(topWidget)
-        lay.addWidget(bottomWidget)
-
-        self.setLayout(lay)
+from pyside_db_chart_mapping_example.chart.settings.settingsDialog import SettingsDialog
+from pyside_db_chart_mapping_example.db.db import SqlTableModel
 
 
 class ChartWidget(QWidget):
@@ -293,7 +208,7 @@ class ChartWidget(QWidget):
             # self.setFrameColor(color)
 
     def __save(self):
-        filename = QFileDialog.getSaveFileName(self, 'Save', '.', 'PNG (*.png);; JPEG (*.jpg;*.jpeg)')
+        filename = QFileDialog.getSaveFileName(self, 'Save', '..', 'PNG (*.png);; JPEG (*.jpg;*.jpeg)')
         ext = filename[1].split('(')[0].strip()
         filename = filename[0]
         if filename:

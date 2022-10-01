@@ -2,8 +2,8 @@ import sys
 
 from PySide6.QtWidgets import QMainWindow, QSplitter, QListWidgetItem, QListWidget, QCheckBox
 
-from pyside_db_chart_mapping_example.chart import ChartWidget
-from pyside_db_chart_mapping_example.db import *
+from pyside_db_chart_mapping_example.chart.chart import ChartWidget
+from pyside_db_chart_mapping_example.db.db import *
 
 
 class CheckBoxListWidget(QListWidget):
