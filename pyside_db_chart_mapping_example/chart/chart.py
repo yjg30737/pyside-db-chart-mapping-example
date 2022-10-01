@@ -1,8 +1,9 @@
+import os
 import typing
 
 from PySide6.QtCharts import QChart, QChartView, QBarSeries, QVBarModelMapper, \
     QBarCategoryAxis, QValueAxis, QBarSet
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QSettings
 from PySide6.QtGui import QPainter, QPixmap, QColor
 from PySide6.QtSql import QSqlQuery
 from PySide6.QtWidgets import QVBoxLayout, QWidget, QTextBrowser, QSplitter, QPushButton, QFileDialog, QHBoxLayout, \
@@ -21,8 +22,10 @@ class ChartWidget(QWidget):
     def __initVal(self):
         self.__idNameDict = {}
         self.__model = SqlTableModel()
-        self.__hoverColor = QColor(255, 0, 0)
-        self.__selectColor = QColor(60, 155, 100)
+
+        self.__settingsStruct = QSettings('chart_settings.ini', QSettings.IniFormat)
+        self.__hoverColor = self.__settingsStruct.value('hoverColor', '#FFFFFF')
+        self.__selectColor = self.__settingsStruct.value('selectColor', '#FFFFFF')
 
     def __initUi(self):
         self.__chart = QChart()
