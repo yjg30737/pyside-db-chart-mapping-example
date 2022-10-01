@@ -17,7 +17,7 @@ All basic CRUD feature of database mapped into chart(QChartView).
 * ID cell can't be editable which is supposed to be like that, you can write number only to score 1~3 columns.
 * You can save the chart as an image file.
 * If you put the mouse cursor on the bar, barset's border color will be changed. If you select/click one of the bar, its background color will be changed and text browser will show the bar's info. If cursor leaves, border color will be restored as normal.
-* You can click the bar one at a time.
+* You can change each color in the settings dialog.
 
 ## Example
 ```python
