@@ -6,7 +6,7 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QPainter, QPixmap, QColor
 from PySide6.QtSql import QSqlQuery
 from PySide6.QtWidgets import QVBoxLayout, QWidget, QTextBrowser, QSplitter, QPushButton, QFileDialog, QHBoxLayout, \
-    QLabel, QGroupBox, QFormLayout
+    QLabel, QGroupBox, QFormLayout, QSpacerItem, QSizePolicy, QDialog
 
 from pyside_db_chart_mapping_example.db import SqlTableModel
 
@@ -53,6 +53,50 @@ class ColorButton(QPushButton):
                             )
 
 
+class SettingsDialog(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.__initUi()
+
+    def __initUi(self):
+        hoverColorBtn = ColorButton()
+        selectColorBtn = ColorButton()
+
+        lay = QFormLayout()
+        lay.addRow('Bar border\'s color when cursor is hovering on it', hoverColorBtn)
+        lay.addRow('Selected bar\'s color', selectColorBtn)
+
+        settingsGrpBox = QGroupBox()
+        settingsGrpBox.setTitle('Chart Settings')
+        settingsGrpBox.setLayout(lay)
+
+        lay = QVBoxLayout()
+        lay.addWidget(settingsGrpBox)
+
+        topWidget = QWidget()
+        topWidget.setLayout(lay)
+
+        okBtn = QPushButton('OK')
+        okBtn.clicked.connect(self.accept)
+
+        closeBtn = QPushButton('Close')
+        closeBtn.clicked.connect(self.close)
+
+        lay = QHBoxLayout()
+        lay.addWidget(okBtn)
+        lay.addWidget(closeBtn)
+        lay.setContentsMargins(0, 0, 0, 0)
+
+        bottomWidget = QWidget()
+        bottomWidget.setLayout(lay)
+
+        lay = QVBoxLayout()
+        lay.addWidget(topWidget)
+        lay.addWidget(bottomWidget)
+
+        self.setLayout(lay)
+
+
 class ChartWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -86,21 +130,15 @@ class ChartWidget(QWidget):
         saveBtn = QPushButton('Save Chart As Image')
         saveBtn.clicked.connect(self.__save)
 
-        hoverColorBtn = ColorButton()
-        selectColorBtn = ColorButton()
-
-        lay = QFormLayout()
-        lay.addRow('Bar border\'s color when cursor is hovering on it', hoverColorBtn)
-        lay.addRow('Selected bar\'s color', selectColorBtn)
-
-        settingsGrpBox = QGroupBox()
-        settingsGrpBox.setTitle('Chart Settings')
-        settingsGrpBox.setLayout(lay)
-
         lay = QHBoxLayout()
 
-        lay.addWidget(settingsGrpBox)
+        settingsBtn = QPushButton('Settings')
+        settingsBtn.clicked.connect(self.__settings)
+
+        lay.addWidget(settingsBtn)
+        lay.addSpacerItem(QSpacerItem(10, 10, QSizePolicy.MinimumExpanding))
         lay.addWidget(saveBtn)
+        lay.setContentsMargins(5, 5, 5, 0)
 
         topWidget = QWidget()
         topWidget.setLayout(lay)
@@ -242,6 +280,17 @@ class ChartWidget(QWidget):
         selectedBarColor = QColor(60, 155, 100)
         for barset in barsets:
             barset.setSelectedColor(selectedBarColor)
+
+    def __settings(self):
+        dialog = SettingsDialog()
+        reply = dialog.exec()
+        if reply == QDialog.Accepted:
+            pass
+            # color = dialog.getFrameColor()
+            # savePath = dialog.getSavePath()
+            # self.__settingsStruct.setValue('frameColor', color.name())
+            # self.__settingsStruct.setValue('savePath', savePath)
+            # self.setFrameColor(color)
 
     def __save(self):
         filename = QFileDialog.getSaveFileName(self, 'Save', '.', 'PNG (*.png);; JPEG (*.jpg;*.jpeg)')
