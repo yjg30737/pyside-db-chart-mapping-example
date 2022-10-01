@@ -1,5 +1,4 @@
 from PySide6.QtCore import QSettings
-from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QDialog, QWidget, QVBoxLayout, QGroupBox, QFormLayout, QPushButton, QHBoxLayout
 
 from pyside_db_chart_mapping_example.chart.settings.colorButton import ColorButton

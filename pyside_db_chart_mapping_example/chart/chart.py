@@ -1,4 +1,4 @@
-import os
+import subprocess
 import typing
 
 from PySide6.QtCharts import QChart, QChartView, QBarSeries, QVBarModelMapper, \
@@ -220,6 +220,8 @@ class ChartWidget(QWidget):
             p.end()
             pixmap.save(filename, ext)
 
+            path = filename.replace('/', '\\')
+            subprocess.Popen(r'explorer /select,"' + path + '"')
 
     def getBarsetsTextList(self):
         return [barset.label() for barset in self.__series.barSets()]
