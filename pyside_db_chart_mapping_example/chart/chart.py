@@ -206,11 +206,6 @@ class ChartWidget(QWidget):
             self.__hoverColor = dialog.getHoverColor()
             self.__selectColor = dialog.getSelectColor()
             self.__setSelectedColor(self.__series.barSets())
-            # color = dialog.getFrameColor()
-            # savePath = dialog.getSavePath()
-            # self.__settingsStruct.setValue('frameColor', color.name())
-            # self.__settingsStruct.setValue('savePath', savePath)
-            # self.setFrameColor(color)
 
     def __save(self):
         filename = QFileDialog.getSaveFileName(self, 'Save', '..', 'PNG (*.png);; JPEG (*.jpg;*.jpeg)')
