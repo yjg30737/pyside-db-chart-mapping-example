@@ -14,8 +14,8 @@ class SettingsDialog(QDialog):
         
     def __initVal(self):
         self.__settingsStruct = QSettings('chart_settings.ini', QSettings.IniFormat)
-        self.__hoverColor = self.__settingsStruct.value('hoverColor', '#FFFFFF')
-        self.__selectColor = self.__settingsStruct.value('selectColor', '#FFFFFF')
+        self.__hoverColor = self.__settingsStruct.value('hoverColor', '#ff0000')
+        self.__selectColor = self.__settingsStruct.value('selectColor', '#329b64')
 
     def __initUi(self):
         self.setWindowTitle('Chart Settings')

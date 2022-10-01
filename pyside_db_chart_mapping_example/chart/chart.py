@@ -24,8 +24,8 @@ class ChartWidget(QWidget):
         self.__model = SqlTableModel()
 
         self.__settingsStruct = QSettings('chart_settings.ini', QSettings.IniFormat)
-        self.__hoverColor = self.__settingsStruct.value('hoverColor', '#FFFFFF')
-        self.__selectColor = self.__settingsStruct.value('selectColor', '#FFFFFF')
+        self.__hoverColor = self.__settingsStruct.value('hoverColor', '#ff0000')
+        self.__selectColor = self.__settingsStruct.value('selectColor', '#329b64')
 
     def __initUi(self):
         self.__chart = QChart()
@@ -219,6 +219,7 @@ class ChartWidget(QWidget):
             p.setRenderHint(QPainter.Antialiasing)
             p.end()
             pixmap.save(filename, ext)
+
 
     def getBarsetsTextList(self):
         return [barset.label() for barset in self.__series.barSets()]
