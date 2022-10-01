@@ -139,6 +139,40 @@ class ChartWidget(QWidget):
             pen = barset.pen()
             pen.setColor(QColor(255, 0, 0))
             barset.setPen(pen)
+            # category = self.__axisX.categories()[idx]
+            # query = QSqlQuery()
+            # query.prepare(f"SELECT * FROM contacts WHERE name = \'{category}\'")
+            # query.exec()
+            # job = email = ''
+            # while query.next():
+            #     job = query.value('job')
+            #     email = query.value('email')
+            #
+            # hoveredSeriesInfo = f'''
+            # Index of barset: {idx}
+            # Barset object: {barset}
+            # Barset object label: {barset.label()}
+            # Barset object category: {category}
+            # Barset object job: {job}
+            # Barset object email: {email}
+            # Barset object value: {barset.at(idx)}
+            # '''
+            # self.__textBrowser.setText(hoveredSeriesInfo)
+        else:
+            pen = barset.pen()
+            pen.setColor(QColor.fromHsvF(0.555833, 0.000000, 1.000000, 1.000000))
+            barset.setPen(pen)
+            # self.__textBrowser.clear()
+
+    def __seriesPressed(self, idx, barset):
+        if barset.isBarSelected(idx):
+            barset.setBarSelected(idx, False)
+            self.__textBrowser.clear()
+        else:
+            for b in self.__series.barSets():
+                b.deselectAllBars()
+                self.__textBrowser.clear()
+            barset.setBarSelected(idx, True)
             category = self.__axisX.categories()[idx]
             query = QSqlQuery()
             query.prepare(f"SELECT * FROM contacts WHERE name = \'{category}\'")
@@ -149,28 +183,15 @@ class ChartWidget(QWidget):
                 email = query.value('email')
 
             hoveredSeriesInfo = f'''
-            Index of barset: {idx}
-            Barset object: {barset}
-            Barset object label: {barset.label()}
-            Barset object category: {category}
-            Barset object job: {job}
-            Barset object email: {email}
-            Barset object value: {barset.at(idx)}
-            '''
+Index of barset: {idx}
+Barset object: {barset}
+Barset object label: {barset.label()}
+Barset object category: {category}
+Barset object job: {job}
+Barset object email: {email}
+Barset object value: {barset.at(idx)}
+                        '''
             self.__textBrowser.setText(hoveredSeriesInfo)
-        else:
-            pen = barset.pen()
-            pen.setColor(QColor.fromHsvF(0.555833, 0.000000, 1.000000, 1.000000))
-            barset.setPen(pen)
-            self.__textBrowser.clear()
-
-    def __seriesPressed(self, idx, barset):
-        if barset.isBarSelected(idx):
-            barset.setBarSelected(idx, False)
-        else:
-            for b in self.__series.barSets():
-                b.deselectAllBars()
-            barset.setBarSelected(idx, True)
 
     def __setBarsetPressSignal(self, barsets: typing.Iterable[QBarSet]):
         selectedBarColor = QColor(60, 155, 100)
