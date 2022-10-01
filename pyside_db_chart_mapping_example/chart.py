@@ -165,7 +165,12 @@ class ChartWidget(QWidget):
             self.__textBrowser.clear()
 
     def __seriesPressed(self, idx, barset):
-        barset.setBarSelected(idx, not barset.isBarSelected(idx))
+        if barset.isBarSelected(idx):
+            barset.setBarSelected(idx, False)
+        else:
+            for b in self.__series.barSets():
+                b.deselectAllBars()
+            barset.setBarSelected(idx, True)
 
     def __setBarsetPressSignal(self, barsets: typing.Iterable[QBarSet]):
         selectedBarColor = QColor(60, 155, 100)
