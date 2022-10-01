@@ -77,7 +77,7 @@ class ChartWidget(QWidget):
 
         # set mapper and series(bars on the chart)
         self.__series = QBarSeries()
-        self.__series.barsetsAdded.connect(self.__setBarsetPressSignal)
+        self.__series.barsetsAdded.connect(self.__setSelectedColor)
 
         self.__mapper = QVBarModelMapper(self)
         self.__mapper.setFirstBarSetColumn(4)
@@ -195,7 +195,7 @@ class ChartWidget(QWidget):
                 self.__textBrowser.clear()
             self.__showSelectedBarInfo(idx, barset)
 
-    def __setBarsetPressSignal(self, barsets: typing.Iterable[QBarSet]):
+    def __setSelectedColor(self, barsets: typing.Iterable[QBarSet]):
         for barset in barsets:
             barset.setSelectedColor(self.__selectColor)
 
@@ -203,7 +203,9 @@ class ChartWidget(QWidget):
         dialog = SettingsDialog()
         reply = dialog.exec()
         if reply == QDialog.Accepted:
-            pass
+            self.__hoverColor = dialog.getHoverColor()
+            self.__selectColor = dialog.getSelectColor()
+            self.__setSelectedColor(self.__series.barSets())
             # color = dialog.getFrameColor()
             # savePath = dialog.getSavePath()
             # self.__settingsStruct.setValue('frameColor', color.name())

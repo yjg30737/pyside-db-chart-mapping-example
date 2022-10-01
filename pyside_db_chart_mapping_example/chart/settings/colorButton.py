@@ -6,13 +6,13 @@ from PySide6.QtWidgets import QPushButton
 class ColorButton(QPushButton):
     colorChanged = Signal(QColor)
 
-    def __init__(self, size=20, r=255, g=255, b=255):
+    def __init__(self, color, size=20):
         super().__init__()
-        self.__initVal(size, r, g, b)
+        self.__initVal(color, size)
         self.__initUi()
 
-    def __initVal(self, size, r, g, b):
-        self.__color = QColor(r, g, b)
+    def __initVal(self, color, size):
+        self.__color = QColor(color)
         self.__size = size
 
     def __initUi(self):
