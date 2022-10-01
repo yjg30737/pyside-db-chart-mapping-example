@@ -21,7 +21,8 @@ class ChartWidget(QWidget):
     def __initVal(self):
         self.__idNameDict = {}
         self.__model = SqlTableModel()
-        self.__curBarSetIdx = 0
+        self.__hoverColor = QColor(255, 0, 0)
+        self.__selectColor = QColor(60, 155, 100)
 
     def __initUi(self):
         self.__chart = QChart()
@@ -152,7 +153,7 @@ class ChartWidget(QWidget):
     def __seriesHovered(self, status, idx, barset: QBarSet):
         if status:
             pen = barset.pen()
-            pen.setColor(QColor(255, 0, 0))
+            pen.setColor(self.__hoverColor)
             barset.setPen(pen)
         else:
             pen = barset.pen()
@@ -192,9 +193,8 @@ class ChartWidget(QWidget):
             self.__showSelectedBarInfo(idx, barset)
 
     def __setBarsetPressSignal(self, barsets: typing.Iterable[QBarSet]):
-        selectedBarColor = QColor(60, 155, 100)
         for barset in barsets:
-            barset.setSelectedColor(selectedBarColor)
+            barset.setSelectedColor(self.__selectColor)
 
     def __settings(self):
         dialog = SettingsDialog()
