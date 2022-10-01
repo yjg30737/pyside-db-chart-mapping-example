@@ -42,9 +42,9 @@ You don't have to care about left check box list. I'm still working on it.
 
 ![image](https://user-images.githubusercontent.com/55078043/193398772-4f869a40-fa5f-4329-99ad-7916abd985a5.png)
 
-If you place the mouse cursor on one of the bar, barset border's color will be changed as i mentioned before.
+If you place the mouse cursor on one of the bar, barset border's color will be changed as i mentioned before. In this case, border color turns to be red.
 
-Click the bar will change the bar's background color and show the bar's basic info on the text browser.
+Click the bar will change the bar's background color and show the bar's basic info on the text browser. In this case, background color turns to be darkblue.
 
 ## See Also
 * <a href="https://doc.qt.io/qt-6/qtcharts-barmodelmapper-example.html">BarModelMapper Example</a> - table(not sql-based table) and chart mapping example in Qt documentation
