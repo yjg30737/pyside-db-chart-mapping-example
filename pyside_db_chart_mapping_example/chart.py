@@ -1,3 +1,5 @@
+import typing
+
 from PySide6.QtCharts import QChart, QChartView, QBarSeries, QVBarModelMapper, \
     QBarCategoryAxis, QValueAxis, QBarSet
 from PySide6.QtCore import Qt
@@ -17,6 +19,7 @@ class ChartWidget(QWidget):
     def __initVal(self):
         self.__idNameDict = {}
         self.__model = SqlTableModel()
+        self.__curBarSetIdx = 0
 
     def __initUi(self):
         self.__chart = QChart()
@@ -55,6 +58,8 @@ class ChartWidget(QWidget):
 
         # set mapper and series(bars on the chart)
         self.__series = QBarSeries()
+        self.__series.barsetsAdded.connect(self.__setBarsetPressSignal)
+
         self.__mapper = QVBarModelMapper(self)
         self.__mapper.setFirstBarSetColumn(4)
         self.__mapper.setLastBarSetColumn(6)
@@ -99,6 +104,7 @@ class ChartWidget(QWidget):
 
         # set hover event to series
         self.__series.hovered.connect(self.__seriesHovered)
+        self.__series.pressed.connect(self.__seriesPressed)
 
     def __addChartXCategory(self, id, name):
         self.__idNameDict[id] = name
@@ -157,6 +163,14 @@ class ChartWidget(QWidget):
             pen.setColor(QColor.fromHsvF(0.555833, 0.000000, 1.000000, 1.000000))
             barset.setPen(pen)
             self.__textBrowser.clear()
+
+    def __seriesPressed(self, idx, barset):
+        barset.setBarSelected(idx, not barset.isBarSelected(idx))
+
+    def __setBarsetPressSignal(self, barsets: typing.Iterable[QBarSet]):
+        selectedBarColor = QColor(60, 155, 100)
+        for barset in barsets:
+            barset.setSelectedColor(selectedBarColor)
 
     def __save(self):
         filename = QFileDialog.getSaveFileName(self, 'Save', '.', 'PNG (*.png);; JPEG (*.jpg;*.jpeg)')
