@@ -3,8 +3,8 @@ import typing
 
 from PySide6.QtCharts import QChart, QChartView, QBarSeries, QVBarModelMapper, \
     QBarCategoryAxis, QValueAxis, QBarSet
-from PySide6.QtCore import Qt, QSettings, QFile, QIODevice
-from PySide6.QtGui import QPainter, QPixmap, QColor, QPdfWriter, QPagedPaintDevice, QTextDocument
+from PySide6.QtCore import Qt, QSettings
+from PySide6.QtGui import QPainter, QPixmap, QColor, QPdfWriter
 from PySide6.QtSql import QSqlQuery
 from PySide6.QtWidgets import QVBoxLayout, QWidget, QTextBrowser, QSplitter, QPushButton, QFileDialog, QHBoxLayout, \
     QSpacerItem, QSizePolicy, QDialog

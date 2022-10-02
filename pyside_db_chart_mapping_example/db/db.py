@@ -6,7 +6,7 @@ from PySide6.QtSql import QSqlTableModel, QSqlQuery, QSqlDatabase
 from PySide6.QtSvgWidgets import QSvgWidget
 from PySide6.QtWidgets import QTableView, QWidget, QHBoxLayout, QApplication, QLabel, QAbstractItemView, \
     QGridLayout, QLineEdit, QMessageBox, QStyledItemDelegate, QPushButton, QComboBox, QSpacerItem, QSizePolicy, \
-    QVBoxLayout, QCompleter
+    QVBoxLayout
 from PySide6.QtCore import Qt, Signal, QSortFilterProxyModel, QModelIndex, QPersistentModelIndex
 
 
@@ -206,6 +206,7 @@ class DatabaseWidget(QWidget):
         self.__searchBar = InstantSearchBar()
         self.__searchBar.setPlaceHolder('Search...')
         self.__searchBar.searched.connect(self.__showResult)
+
         # lineEdit = self.__searchBar.getSearchBar()
         # completer = QCompleter()
         # completer.setModel(self.__model)
