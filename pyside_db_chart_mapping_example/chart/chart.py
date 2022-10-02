@@ -3,7 +3,7 @@ import typing
 
 from PySide6.QtCharts import QChart, QChartView, QBarSeries, QVBarModelMapper, \
     QBarCategoryAxis, QValueAxis, QBarSet
-from PySide6.QtCore import Qt, QSettings
+from PySide6.QtCore import Qt, QSettings, QFile, QIODevice
 from PySide6.QtGui import QPainter, QPixmap, QColor, QPdfWriter, QPagedPaintDevice, QTextDocument
 from PySide6.QtSql import QSqlQuery
 from PySide6.QtWidgets import QVBoxLayout, QWidget, QTextBrowser, QSplitter, QPushButton, QFileDialog, QHBoxLayout, \
@@ -225,7 +225,6 @@ class ChartWidget(QWidget):
         if filename:
             # pdf file
             if ext == 'PDF':
-                print('pdf')
                 writer = QPdfWriter(filename)
                 writer.setResolution(100)
                 p = QPainter()
@@ -235,11 +234,16 @@ class ChartWidget(QWidget):
                 p.end()
             # image file
             else:
-                pixmap = QPixmap(self.__chartView.size())
-                p = QPainter()
+                dpr = self.__chartView.devicePixelRatioF()
+                # dpr, *2 is for high quality image
+                pixmap = QPixmap(int(self.__chartView.width() * dpr * 2),
+                                 int(self.__chartView.height() * dpr * 2))
+                # make the background transparent
+                pixmap.fill(Qt.transparent)
+                p = QPainter(pixmap)
+                p.setRenderHint(QPainter.Antialiasing)
                 p.begin(pixmap)
                 self.__chartView.render(p)
-                p.setRenderHint(QPainter.Antialiasing)
                 p.end()
                 pixmap.save(filename, ext)
 
