@@ -4,7 +4,7 @@ import typing
 from PySide6.QtCharts import QChart, QChartView, QBarSeries, QVBarModelMapper, \
     QBarCategoryAxis, QValueAxis, QBarSet
 from PySide6.QtCore import Qt, QSettings
-from PySide6.QtGui import QPainter, QPixmap, QColor
+from PySide6.QtGui import QPainter, QPixmap, QColor, QPdfWriter, QPagedPaintDevice, QTextDocument
 from PySide6.QtSql import QSqlQuery
 from PySide6.QtWidgets import QVBoxLayout, QWidget, QTextBrowser, QSplitter, QPushButton, QFileDialog, QHBoxLayout, \
     QSpacerItem, QSizePolicy, QDialog
@@ -49,6 +49,9 @@ class ChartWidget(QWidget):
             "QSplitterHandle {background-color: lightgray;}")
         mainWidget.setSizes([700, 300])
 
+        savePdfBtn = QPushButton('Save Chart As PDF')
+        savePdfBtn.clicked.connect(self.__savePdf)
+
         saveBtn = QPushButton('Save Chart As Image')
         saveBtn.clicked.connect(self.__save)
 
@@ -59,6 +62,7 @@ class ChartWidget(QWidget):
 
         lay.addWidget(settingsBtn)
         lay.addSpacerItem(QSpacerItem(10, 10, QSizePolicy.MinimumExpanding))
+        lay.addWidget(savePdfBtn)
         lay.addWidget(saveBtn)
         lay.setContentsMargins(5, 5, 5, 0)
 
@@ -215,6 +219,18 @@ class ChartWidget(QWidget):
             self.__initSettings()
             self.__setAnimation()
             self.__setSelectedColor(self.__series.barSets())
+
+    def __savePdf(self):
+        filename = QFileDialog.getSaveFileName(self, 'Save', '', "PDF files (*.pdf)")
+        filename = filename[0]
+        if filename:
+            writer = QPdfWriter(filename)
+            writer.setResolution(100)
+            p = QPainter()
+            p.begin(writer)
+            self.__chartView.render(p)
+            p.setRenderHint(QPainter.SmoothPixmapTransform)
+            p.end()
 
     def __save(self):
         filename = QFileDialog.getSaveFileName(self, 'Save', '..', 'PNG (*.png);; JPEG (*.jpg;*.jpeg)')
