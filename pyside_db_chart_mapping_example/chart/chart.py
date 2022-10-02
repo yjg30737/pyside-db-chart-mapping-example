@@ -213,9 +213,7 @@ class ChartWidget(QWidget):
         dialog = SettingsDialog()
         reply = dialog.exec()
         if reply == QDialog.Accepted:
-            self.__animation = dialog.getAnimation()
-            self.__hoverColor = dialog.getHoverColor()
-            self.__selectColor = dialog.getSelectColor()
+            self.__initVal()
             self.__setAnimation()
             self.__setSelectedColor(self.__series.barSets())
 
