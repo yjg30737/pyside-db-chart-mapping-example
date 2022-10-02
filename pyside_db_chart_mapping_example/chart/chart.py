@@ -49,10 +49,7 @@ class ChartWidget(QWidget):
             "QSplitterHandle {background-color: lightgray;}")
         mainWidget.setSizes([700, 300])
 
-        savePdfBtn = QPushButton('Save Chart As PDF')
-        savePdfBtn.clicked.connect(self.__savePdf)
-
-        saveBtn = QPushButton('Save Chart As Image')
+        saveBtn = QPushButton('Save Chart')
         saveBtn.clicked.connect(self.__save)
 
         lay = QHBoxLayout()
@@ -62,7 +59,6 @@ class ChartWidget(QWidget):
 
         lay.addWidget(settingsBtn)
         lay.addSpacerItem(QSpacerItem(10, 10, QSizePolicy.MinimumExpanding))
-        lay.addWidget(savePdfBtn)
         lay.addWidget(saveBtn)
         lay.setContentsMargins(5, 5, 5, 0)
 
@@ -220,30 +216,32 @@ class ChartWidget(QWidget):
             self.__setAnimation()
             self.__setSelectedColor(self.__series.barSets())
 
-    def __savePdf(self):
-        filename = QFileDialog.getSaveFileName(self, 'Save', '', "PDF files (*.pdf)")
-        filename = filename[0]
-        if filename:
-            writer = QPdfWriter(filename)
-            writer.setResolution(100)
-            p = QPainter()
-            p.begin(writer)
-            self.__chartView.render(p)
-            p.setRenderHint(QPainter.SmoothPixmapTransform)
-            p.end()
-
     def __save(self):
-        filename = QFileDialog.getSaveFileName(self, 'Save', '..', 'PNG (*.png);; JPEG (*.jpg;*.jpeg)')
+        filename = QFileDialog.getSaveFileName(self, 'Save', '.', 'PNG (*.png);; '
+                                                                  'JPEG (*.jpg;*.jpeg);;'
+                                                                  'PDF (*.pdf)')
         ext = filename[1].split('(')[0].strip()
         filename = filename[0]
         if filename:
-            pixmap = QPixmap(self.__chartView.size())
-            p = QPainter()
-            p.begin(pixmap)
-            self.__chartView.render(p)
-            p.setRenderHint(QPainter.Antialiasing)
-            p.end()
-            pixmap.save(filename, ext)
+            # pdf file
+            if ext == 'PDF':
+                print('pdf')
+                writer = QPdfWriter(filename)
+                writer.setResolution(100)
+                p = QPainter()
+                p.begin(writer)
+                self.__chartView.render(p)
+                p.setRenderHint(QPainter.SmoothPixmapTransform)
+                p.end()
+            # image file
+            else:
+                pixmap = QPixmap(self.__chartView.size())
+                p = QPainter()
+                p.begin(pixmap)
+                self.__chartView.render(p)
+                p.setRenderHint(QPainter.Antialiasing)
+                p.end()
+                pixmap.save(filename, ext)
 
             path = filename.replace('/', '\\')
             subprocess.Popen(r'explorer /select,"' + path + '"')
