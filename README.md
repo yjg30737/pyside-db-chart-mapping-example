@@ -15,7 +15,7 @@ All basic CRUD feature of database mapped into chart(QChartView).
 * 4 records are given by default to show how it works.
 * You can search the text in table with writing the text in search bar. Table will show the matched records, chart will be not influenced by search bar.
 * ID cell can't be editable which is supposed to be like that, you can write number only to score 1~3 columns.
-* You can save the chart as an image file.
+* You can save the chart as an image/pdf file.
 * If you put the mouse cursor on the bar, barset's border color will be changed. If you select/click one of the bar, its background color will be changed and text browser will show the bar's info. If cursor leaves, border color will be restored as normal.
 * You can change each color of the bar, choose to set the animation of chart in the settings dialog.
 
