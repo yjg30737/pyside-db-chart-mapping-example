@@ -1,5 +1,6 @@
-from PySide6.QtCore import QSettings
-from PySide6.QtWidgets import QDialog, QWidget, QVBoxLayout, QGroupBox, QFormLayout, QPushButton, QHBoxLayout
+from PySide6.QtCore import QSettings, Qt
+from PySide6.QtWidgets import QDialog, QWidget, QVBoxLayout, QGroupBox, QFormLayout, QPushButton, QHBoxLayout, \
+    QCheckBox, QGridLayout, QLabel
 
 from pyside_db_chart_mapping_example.chart.settings.colorButton import ColorButton
 from pyside_db_chart_mapping_example.chart.settings.colorPickerDialog import ColorPickerDialog
@@ -13,6 +14,7 @@ class SettingsDialog(QDialog):
         
     def __initVal(self):
         self.__settingsStruct = QSettings('chart_settings.ini', QSettings.IniFormat)
+        self.__animation = bool(self.__settingsStruct.value('animation', True))
         self.__hoverColor = self.__settingsStruct.value('hoverColor', '#ff0000')
         self.__selectColor = self.__settingsStruct.value('selectColor', '#329b64')
 
@@ -25,9 +27,16 @@ class SettingsDialog(QDialog):
         self.__hoverColorBtn.clicked.connect(self.__setHoverColor)
         self.__selectColorBtn.clicked.connect(self.__setSelectColor)
 
-        lay = QFormLayout()
-        lay.addRow('Bar border\'s color when cursor is hovering on it', self.__hoverColorBtn)
-        lay.addRow('Selected bar\'s color', self.__selectColorBtn)
+        animationChkBox = QCheckBox('Animation')
+        animationChkBox.setChecked(self.__animation)
+        animationChkBox.toggled.connect(self.__animationToggle)
+
+        lay = QGridLayout()
+        lay.addWidget(animationChkBox, 0, 0, 1, 1)
+        lay.addWidget(QLabel('Bar border\'s color when cursor is hovering on it'), 1, 0, 1, 1)
+        lay.addWidget(self.__hoverColorBtn, 1, 1, 1, 1)
+        lay.addWidget(QLabel('Selected bar\'s color'), 2, 0, 1, 1)
+        lay.addWidget(self.__selectColorBtn, 2, 1, 1, 1)
 
         settingsGrpBox = QGroupBox()
         settingsGrpBox.setTitle('Chart Settings')
@@ -59,6 +68,8 @@ class SettingsDialog(QDialog):
 
         self.setLayout(lay)
 
+        self.setFixedSize(self.sizeHint().width(), self.sizeHint().height())
+
     def __setHoverColor(self):
         dialog = ColorPickerDialog(self.__hoverColorBtn.getColor())
         reply = dialog.exec()
@@ -74,6 +85,13 @@ class SettingsDialog(QDialog):
             newColor = dialog.getColor()
             self.__selectColorBtn.setColor(newColor)
             self.__settingsStruct.setValue('selectColor', newColor.name())
+
+    def __animationToggle(self, f):
+        self.__animation = f
+        self.__settingsStruct.setValue('animation', f)
+
+    def getAnimation(self):
+        return self.__animation
 
     def getHoverColor(self):
         return self.__hoverColorBtn.getColor()

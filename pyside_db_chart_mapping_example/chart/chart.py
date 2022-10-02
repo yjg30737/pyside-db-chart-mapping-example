@@ -24,12 +24,16 @@ class ChartWidget(QWidget):
         self.__model = SqlTableModel()
 
         self.__settingsStruct = QSettings('chart_settings.ini', QSettings.IniFormat)
+        self.__animation = self.__settingsStruct.value('animation', True)
         self.__hoverColor = self.__settingsStruct.value('hoverColor', '#ff0000')
         self.__selectColor = self.__settingsStruct.value('selectColor', '#329b64')
 
     def __initUi(self):
         self.__chart = QChart()
-        self.__chart.setAnimationOptions(QChart.AllAnimations)
+        if self.__animation:
+            self.__chart.setAnimationOptions(QChart.AllAnimations)
+        else:
+            self.__chart.setAnimationOptions(QChart.NoAnimation)
 
         self.__textBrowser = QTextBrowser()
         self.__textBrowser.setPlaceholderText('Place the mouse cursor over one of the bars to see the bar info here')
@@ -195,6 +199,12 @@ class ChartWidget(QWidget):
                 self.__textBrowser.clear()
             self.__showSelectedBarInfo(idx, barset)
 
+    def __setAnimation(self):
+        if self.__animation:
+            self.__chart.setAnimationOptions(QChart.AllAnimations)
+        else:
+            self.__chart.setAnimationOptions(QChart.NoAnimation)
+
     def __setSelectedColor(self, barsets: typing.Iterable[QBarSet]):
         for barset in barsets:
             barset.setSelectedColor(self.__selectColor)
@@ -203,8 +213,10 @@ class ChartWidget(QWidget):
         dialog = SettingsDialog()
         reply = dialog.exec()
         if reply == QDialog.Accepted:
+            self.__animation = dialog.getAnimation()
             self.__hoverColor = dialog.getHoverColor()
             self.__selectColor = dialog.getSelectColor()
+            self.__setAnimation()
             self.__setSelectedColor(self.__series.barSets())
 
     def __save(self):
