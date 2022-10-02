@@ -14,7 +14,7 @@ class SettingsDialog(QDialog):
         
     def __initVal(self):
         self.__settingsStruct = QSettings('chart_settings.ini', QSettings.IniFormat)
-        self.__animation = bool(self.__settingsStruct.value('animation', True))
+        self.__animation = int(self.__settingsStruct.value('animation', 1))
         self.__hoverColor = self.__settingsStruct.value('hoverColor', '#ff0000')
         self.__selectColor = self.__settingsStruct.value('selectColor', '#329b64')
 
@@ -28,7 +28,7 @@ class SettingsDialog(QDialog):
         self.__selectColorBtn.clicked.connect(self.__setSelectColor)
 
         animationChkBox = QCheckBox('Animation')
-        animationChkBox.setChecked(self.__animation)
+        animationChkBox.setChecked(bool(self.__animation))
         animationChkBox.toggled.connect(self.__animationToggle)
 
         lay = QGridLayout()
@@ -87,8 +87,8 @@ class SettingsDialog(QDialog):
             self.__settingsStruct.setValue('selectColor', newColor.name())
 
     def __animationToggle(self, f):
-        self.__animation = f
-        self.__settingsStruct.setValue('animation', f)
+        self.__animation = int(f)
+        self.__settingsStruct.setValue('animation', self.__animation)
 
     def getAnimation(self):
         return self.__animation
