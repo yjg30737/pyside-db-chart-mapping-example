@@ -126,7 +126,7 @@ class ChartWidget(QWidget):
 
         # set hover event to series
         self.__series.hovered.connect(self.__seriesHovered)
-        self.__series.pressed.connect(self.__seriesPressed)
+        self.__series.clicked.connect(self.__seriesPressed)
 
     def __addChartXCategory(self, id, name):
         self.__idNameDict[id] = name
