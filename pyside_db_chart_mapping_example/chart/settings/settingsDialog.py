@@ -1,6 +1,6 @@
 from PySide6.QtCore import QSettings, Qt
 from PySide6.QtWidgets import QDialog, QWidget, QVBoxLayout, QGroupBox, QFormLayout, QPushButton, QHBoxLayout, \
-    QCheckBox, QGridLayout, QLabel
+    QCheckBox, QGridLayout, QLabel, QComboBox
 
 from pyside_db_chart_mapping_example.chart.settings.colorButton import ColorButton
 from pyside_db_chart_mapping_example.chart.settings.colorPickerDialog import ColorPickerDialog
@@ -15,6 +15,7 @@ class SettingsDialog(QDialog):
     def __initVal(self):
         self.__settingsStruct = QSettings('chart_settings.ini', QSettings.IniFormat)
         self.__animation = int(self.__settingsStruct.value('animation', 1))
+        self.__theme = self.__settingsStruct.value('theme', 'Light')
         self.__hoverColor = self.__settingsStruct.value('hoverColor', '#ff0000')
         self.__selectColor = self.__settingsStruct.value('selectColor', '#329b64')
 
@@ -31,12 +32,19 @@ class SettingsDialog(QDialog):
         animationChkBox.setChecked(bool(self.__animation))
         animationChkBox.toggled.connect(self.__animationToggle)
 
+        self.__themeCmbBox = QComboBox()
+        self.__themeCmbBox.addItems(['Light', 'Dark'])
+        self.__themeCmbBox.setCurrentText(self.__theme)
+        self.__themeCmbBox.currentTextChanged.connect(self.__themeChanged)
+
         lay = QGridLayout()
         lay.addWidget(animationChkBox, 0, 0, 1, 1)
         lay.addWidget(QLabel('Bar border\'s color when cursor is hovering on it'), 1, 0, 1, 1)
-        lay.addWidget(self.__hoverColorBtn, 1, 1, 1, 1)
+        lay.addWidget(self.__hoverColorBtn, 1, 1, 1, 1, Qt.AlignRight)
         lay.addWidget(QLabel('Selected bar\'s color'), 2, 0, 1, 1)
-        lay.addWidget(self.__selectColorBtn, 2, 1, 1, 1)
+        lay.addWidget(self.__selectColorBtn, 2, 1, 1, 1, Qt.AlignRight)
+        lay.addWidget(QLabel('Theme'), 3, 0, 1, 1)
+        lay.addWidget(self.__themeCmbBox, 3, 1, 1, 1, Qt.AlignRight)
 
         settingsGrpBox = QGroupBox()
         settingsGrpBox.setTitle('Chart Settings')
@@ -89,6 +97,10 @@ class SettingsDialog(QDialog):
     def __animationToggle(self, f):
         self.__animation = int(f)
         self.__settingsStruct.setValue('animation', self.__animation)
+
+    def __themeChanged(self, text):
+        self.__theme = text
+        self.__settingsStruct.setValue('theme', self.__theme)
 
     def getAnimation(self):
         return self.__animation
