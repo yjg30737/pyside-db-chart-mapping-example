@@ -11,7 +11,12 @@ You can find out more features and usages below.
 * PySide6
 
 ## Setup
+### If you want to import/export excel feature
 `python -m pip install git+https://github.com/yjg30737/pyside-db-chart-mapping-example.git --upgrade`
+
+Note: You have to install pandas, xlsxwriter, etc. 
+### If you don't want to do it
+`python -m pip install git+https://github.com/yjg30737/pyside-db-chart-mapping-example.git@7d204961cd7462266ab15a20e9c0a62c40ab74fc`
 
 ## Usage/Feature
 * If you want to delete more than one record, holding ctrl and select records one by one or holding shift and select records as consecutive range.
