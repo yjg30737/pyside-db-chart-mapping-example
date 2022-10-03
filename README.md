@@ -3,7 +3,9 @@ PySide6 example of mapping database table(QSqlTableModel based tableview) and ch
 
 All basic CRUD feature of database mapped into chart(QChartView).
 
-You can save the chart as image/pdf file, you can see the saved file over here <a href="https://github.com/yjg30737/pyside-db-chart-mapping-example/tree/main/pyside_db_chart_mapping_example/save_chart_sample"> 
+You can save the chart as image/pdf file, you can see the saved file over <a href="https://github.com/yjg30737/pyside-db-chart-mapping-example/tree/main/pyside_db_chart_mapping_example/save_chart_sample">here</a>.
+
+You can find out more features and usages below. 
 
 ## Requirements
 * PySide6
