@@ -1,7 +1,7 @@
 import os
 from typing import Union
 
-from PySide6.QtGui import QIntValidator
+from PySide6.QtGui import QIntValidator, QColor
 from PySide6.QtSql import QSqlTableModel, QSqlQuery, QSqlDatabase
 from PySide6.QtSvgWidgets import QSvgWidget
 from PySide6.QtWidgets import QTableView, QWidget, QHBoxLayout, QApplication, QLabel, QAbstractItemView, \
@@ -196,21 +196,22 @@ class DatabaseWidget(QWidget):
         # set current index as first record
         self.__tableView.setCurrentIndex(self.__tableView.model().index(0, 0))
 
-        # add/delete buttons
-        addBtn = QPushButton('Add')
+        # add/delete record buttons
+        addBtn = QPushButton('Add Record')
         addBtn.clicked.connect(self.__add)
-        self.__delBtn = QPushButton('Delete')
+        self.__delBtn = QPushButton('Delete Record')
         self.__delBtn.clicked.connect(self.__delete)
+
+        # column add/delete buttons
+        addColBtn = QPushButton('Add Column')
+        addColBtn.clicked.connect(self.__addCol)
+        self.__delColBtn = QPushButton('Delete Column')
+        self.__delColBtn.clicked.connect(self.__deleteCol)
 
         # instant search bar
         self.__searchBar = InstantSearchBar()
         self.__searchBar.setPlaceHolder('Search...')
         self.__searchBar.searched.connect(self.__showResult)
-
-        # lineEdit = self.__searchBar.getSearchBar()
-        # completer = QCompleter()
-        # completer.setModel(self.__model)
-        # lineEdit.setCompleter(completer)
 
         # combo box to make it enable to search by each column
         self.__comboBox = QComboBox()
@@ -227,6 +228,8 @@ class DatabaseWidget(QWidget):
         lay.addWidget(self.__comboBox)
         lay.addWidget(addBtn)
         lay.addWidget(self.__delBtn)
+        lay.addWidget(addColBtn)
+        lay.addWidget(self.__delColBtn)
         lay.setContentsMargins(0, 0, 0, 0)
         btnWidget = QWidget()
         btnWidget.setLayout(lay)
@@ -288,6 +291,12 @@ class DatabaseWidget(QWidget):
         # send deleted signal
         self.__model.deleted.emit(names)
         self.__delBtnToggle()
+
+    def __addCol(self):
+        print('addCol')
+
+    def __deleteCol(self):
+        print('deleteCol')
 
     def __showResult(self, text):
         # index -1 will be read from all columns
