@@ -10,6 +10,7 @@ from PySide6.QtWidgets import QTableView, QWidget, QHBoxLayout, QApplication, QL
 from PySide6.QtCore import Qt, Signal, QSortFilterProxyModel, QModelIndex, QPersistentModelIndex
 
 from pyside_db_chart_mapping_example.db.addColDialog import AddColDialog
+from pyside_db_chart_mapping_example.db.delColDialog import DelColDialog
 
 
 class InstantSearchBar(QWidget):
@@ -309,7 +310,10 @@ class DatabaseWidget(QWidget):
             #     self.__model.setHeaderData(i, Qt.Horizontal, columnNames[i])
 
     def __deleteCol(self):
-        print('deleteCol')
+        dialog = DelColDialog()
+        reply = dialog.exec()
+        if reply == QDialog.Accepted:
+            print(reply)
 
     def __showResult(self, text):
         # index -1 will be read from all columns
