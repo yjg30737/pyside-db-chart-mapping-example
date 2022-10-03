@@ -1,5 +1,6 @@
 import os
 import sqlite3, xlsxwriter
+import pandas as pd
 from typing import Union
 import subprocess
 
@@ -139,6 +140,8 @@ class SqlTableModel(QSqlTableModel):
     added = Signal(int, str)
     updated = Signal(int, str)
     deleted = Signal(list)
+    addedCol = Signal(str)
+    deletedCol = Signal(str)
 
     def __init__(self, *args, **kwargs):
         super().__init__()
@@ -213,6 +216,9 @@ class DatabaseWidget(QWidget):
         self.__delColBtn = QPushButton('Delete Column')
         self.__delColBtn.clicked.connect(self.__deleteCol)
 
+        self.__importBtn = QPushButton('Import')
+        self.__importBtn.clicked.connect(self.__import)
+
         self.__saveBtn = QPushButton('Save As Excel')
         self.__saveBtn.clicked.connect(self.__save)
 
@@ -238,6 +244,7 @@ class DatabaseWidget(QWidget):
         lay.addWidget(self.__delBtn)
         lay.addWidget(addColBtn)
         lay.addWidget(self.__delColBtn)
+        lay.addWidget(self.__importBtn)
         lay.addWidget(self.__saveBtn)
         lay.setContentsMargins(0, 0, 0, 0)
         btnWidget = QWidget()
@@ -300,6 +307,22 @@ class DatabaseWidget(QWidget):
         # send deleted signal
         self.__model.deleted.emit(names)
         self.__delBtnToggle()
+
+    def __import(self):
+        filename = QFileDialog.getOpenFileName(self, 'Select the file', '', 'Excel File (*.xlsx)')
+        filename = filename[0]
+        if filename[0]:
+            try:
+                con = sqlite3.connect('contacts.sqlite')
+                wb = pd.read_excel(filename, sheet_name=None)
+                for sheet in wb:
+                    wb[sheet].to_sql(sheet, con, index=False)
+                con.commit()
+                con.close()
+                self.__model.setTable('Sheet1')
+                self.__model.select()
+            except Exception as e:
+                print(e)
 
     def __addCol(self):
         dialog = AddColDialog()
