@@ -1,12 +1,14 @@
 import os
+import sqlite3, xlsxwriter
 from typing import Union
+import subprocess
 
-from PySide6.QtGui import QIntValidator, QColor
+from PySide6.QtGui import QIntValidator
 from PySide6.QtSql import QSqlTableModel, QSqlQuery, QSqlDatabase
 from PySide6.QtSvgWidgets import QSvgWidget
 from PySide6.QtWidgets import QTableView, QWidget, QHBoxLayout, QApplication, QLabel, QAbstractItemView, \
     QGridLayout, QLineEdit, QMessageBox, QStyledItemDelegate, QPushButton, QComboBox, QSpacerItem, QSizePolicy, \
-    QVBoxLayout, QDialog
+    QVBoxLayout, QDialog, QFileDialog
 from PySide6.QtCore import Qt, Signal, QSortFilterProxyModel, QModelIndex, QPersistentModelIndex
 
 from pyside_db_chart_mapping_example.db.addColDialog import AddColDialog
@@ -211,6 +213,9 @@ class DatabaseWidget(QWidget):
         self.__delColBtn = QPushButton('Delete Column')
         self.__delColBtn.clicked.connect(self.__deleteCol)
 
+        self.__saveBtn = QPushButton('Save As Excel')
+        self.__saveBtn.clicked.connect(self.__save)
+
         # instant search bar
         self.__searchBar = InstantSearchBar()
         self.__searchBar.setPlaceHolder('Search...')
@@ -233,6 +238,7 @@ class DatabaseWidget(QWidget):
         lay.addWidget(self.__delBtn)
         lay.addWidget(addColBtn)
         lay.addWidget(self.__delColBtn)
+        lay.addWidget(self.__saveBtn)
         lay.setContentsMargins(0, 0, 0, 0)
         btnWidget = QWidget()
         btnWidget.setLayout(lay)
@@ -305,15 +311,29 @@ class DatabaseWidget(QWidget):
             self.__model.setTable(self.__tableName)
             self.__model.select()
             self.__tableView.resizeColumnsToContents()
-            # columnNames = ['ID', 'Name', 'Job', 'Email', 'Score 1', 'Score 2', 'Score 3']
-            # for i in range(len(columnNames)):
-            #     self.__model.setHeaderData(i, Qt.Horizontal, columnNames[i])
 
     def __deleteCol(self):
         dialog = DelColDialog()
         reply = dialog.exec()
         if reply == QDialog.Accepted:
             print(reply)
+
+    def __save(self):
+        filename = QFileDialog.getSaveFileName(self, 'Save', '.', 'Excel File (*.xlsx)')
+        filename = filename[0]
+        if filename:
+            workbook = xlsxwriter.Workbook(filename)
+            worksheet = workbook.add_worksheet()
+            conn = sqlite3.connect('contacts.sqlite')
+            c = conn.cursor()
+            mysel = c.execute(f"select * from {self.__tableName}")
+            for i, row in enumerate(mysel):
+                for j, value in enumerate(row):
+                    worksheet.write(i, j, row[j])
+            workbook.close()
+
+        path = filename.replace('/', '\\')
+        subprocess.Popen(r'explorer /select,"' + path + '"')
 
     def __showResult(self, text):
         # index -1 will be read from all columns
