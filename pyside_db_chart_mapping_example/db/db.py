@@ -299,7 +299,7 @@ class DatabaseWidget(QWidget):
         reply = dialog.exec()
         if reply == QDialog.Accepted:
             q = QSqlQuery()
-            q.prepare(f'ALTER TABLE {self.__tableName} ADD COLUMN score4 INTEGER')
+            q.prepare(f'ALTER TABLE {self.__tableName} ADD COLUMN "{dialog.getColumnName()}" INTEGER')
             q.exec()
             self.__model.setTable(self.__tableName)
             self.__model.select()
@@ -354,13 +354,13 @@ def initTable():
     createTableQuery.prepare(
         f"""
         CREATE TABLE {table} (
-            id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
-            name VARCHAR(40) UNIQUE NOT NULL,
-            job VARCHAR(50),
-            email VARCHAR(40) NOT NULL,
-            score1 INTEGER,
-            score2 INTEGER,
-            score3 INTEGER
+            ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
+            Name VARCHAR(40) UNIQUE NOT NULL,
+            Job VARCHAR(50),
+            Email VARCHAR(40) NOT NULL,
+            "Score 1" INTEGER,
+            "Score 2" INTEGER,
+            "Score 3" INTEGER
         )
         """
     )
@@ -374,12 +374,12 @@ def addSample():
     insertDataQuery.prepare(
         f"""
         INSERT INTO {table} (
-            name,
-            job,
-            email,
-            score1,
-            score2,
-            score3
+            Name,
+            Job,
+            Email,
+            "Score 1",
+            "Score 2",
+            "Score 3"
         )
         VALUES (?, ?, ?, ?, ?, ?)
         """

@@ -10,8 +10,10 @@ class AddColDialog(QDialog):
     def __initUi(self):
         self.setWindowTitle('Add Column')
 
+        self.__colNameLineEdit = QLineEdit()
+
         lay = QFormLayout()
-        lay.addRow('Name', QLineEdit())
+        lay.addRow('Name', self.__colNameLineEdit)
 
         topWidget = QWidget()
         topWidget.setLayout(lay)
@@ -37,3 +39,6 @@ class AddColDialog(QDialog):
         self.setLayout(lay)
 
         self.setFixedSize(self.sizeHint().width(), self.sizeHint().height())
+
+    def getColumnName(self):
+        return self.__colNameLineEdit.text()
