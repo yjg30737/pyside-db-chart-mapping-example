@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
 Result
 
-![image](https://user-images.githubusercontent.com/55078043/193398874-d5f3d306-af4f-4de3-be21-056d771de8f2.png)
+![image](https://user-images.githubusercontent.com/55078043/193486856-9a05dc68-c804-4c4a-ae92-02c8cd674cd1.png)
 
 You don't have to care about left check box list. I'm still working on it.
 
