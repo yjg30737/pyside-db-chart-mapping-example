@@ -6,8 +6,10 @@ from PySide6.QtSql import QSqlTableModel, QSqlQuery, QSqlDatabase
 from PySide6.QtSvgWidgets import QSvgWidget
 from PySide6.QtWidgets import QTableView, QWidget, QHBoxLayout, QApplication, QLabel, QAbstractItemView, \
     QGridLayout, QLineEdit, QMessageBox, QStyledItemDelegate, QPushButton, QComboBox, QSpacerItem, QSizePolicy, \
-    QVBoxLayout
+    QVBoxLayout, QDialog
 from PySide6.QtCore import Qt, Signal, QSortFilterProxyModel, QModelIndex, QPersistentModelIndex
+
+from pyside_db_chart_mapping_example.db.addColDialog import AddColDialog
 
 
 class InstantSearchBar(QWidget):
@@ -152,17 +154,17 @@ class DatabaseWidget(QWidget):
 
     def __initUi(self):
         # table name
-        tableName = "contacts"
+        self.__tableName = "contacts"
 
         # label
-        lbl = QLabel(tableName.capitalize())
+        lbl = QLabel(self.__tableName.capitalize())
 
         columnNames = ['ID', 'Name', 'Job', 'Email', 'Score 1', 'Score 2', 'Score 3']
 
         # database table
         # set up the model
         self.__model = SqlTableModel(self)
-        self.__model.setTable(tableName)
+        self.__model.setTable(self.__tableName)
         self.__model.setEditStrategy(QSqlTableModel.OnFieldChange)
         self.__model.beforeUpdate.connect(self.__updated)
         for i in range(len(columnNames)):
@@ -293,7 +295,18 @@ class DatabaseWidget(QWidget):
         self.__delBtnToggle()
 
     def __addCol(self):
-        print('addCol')
+        dialog = AddColDialog()
+        reply = dialog.exec()
+        if reply == QDialog.Accepted:
+            q = QSqlQuery()
+            q.prepare(f'ALTER TABLE {self.__tableName} ADD COLUMN score4 INTEGER')
+            q.exec()
+            self.__model.setTable(self.__tableName)
+            self.__model.select()
+            self.__tableView.resizeColumnsToContents()
+            # columnNames = ['ID', 'Name', 'Job', 'Email', 'Score 1', 'Score 2', 'Score 3']
+            # for i in range(len(columnNames)):
+            #     self.__model.setHeaderData(i, Qt.Horizontal, columnNames[i])
 
     def __deleteCol(self):
         print('deleteCol')
