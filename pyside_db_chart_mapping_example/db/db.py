@@ -216,7 +216,7 @@ class DatabaseWidget(QWidget):
         self.__delColBtn = QPushButton('Delete Column')
         self.__delColBtn.clicked.connect(self.__deleteCol)
 
-        self.__importBtn = QPushButton('Import')
+        self.__importBtn = QPushButton('Import As Excel')
         self.__importBtn.clicked.connect(self.__import)
 
         self.__saveBtn = QPushButton('Save As Excel')
@@ -348,12 +348,17 @@ class DatabaseWidget(QWidget):
             workbook = xlsxwriter.Workbook(filename)
             worksheet = workbook.add_worksheet()
             conn = sqlite3.connect('contacts.sqlite')
-            c = conn.cursor()
+            cur = conn.cursor()
 
-            mysel = c.execute(f"select * from {self.__tableName}")
+            mysel = cur.execute(f"select * from {self.__tableName}")
+            columnNames = list(map(lambda x: x[0], mysel.description))
+
+            for c_idx in range(len(columnNames)):
+                worksheet.write(0, c_idx, columnNames[c_idx])
+
             for i, row in enumerate(mysel):
                 for j, value in enumerate(row):
-                    worksheet.write(i, j, row[j])
+                    worksheet.write(i+1, j, row[j])
             workbook.close()
 
             path = filename.replace('/', '\\')
