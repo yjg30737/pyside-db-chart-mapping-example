@@ -219,8 +219,8 @@ class DatabaseWidget(QWidget):
         self.__importBtn = QPushButton('Import As Excel')
         self.__importBtn.clicked.connect(self.__import)
 
-        self.__saveBtn = QPushButton('Save As Excel')
-        self.__saveBtn.clicked.connect(self.__save)
+        self.__exportBtn = QPushButton('Export As Excel')
+        self.__exportBtn.clicked.connect(self.__export)
 
         # instant search bar
         self.__searchBar = InstantSearchBar()
@@ -245,7 +245,7 @@ class DatabaseWidget(QWidget):
         lay.addWidget(addColBtn)
         lay.addWidget(self.__delColBtn)
         lay.addWidget(self.__importBtn)
-        lay.addWidget(self.__saveBtn)
+        lay.addWidget(self.__exportBtn)
         lay.setContentsMargins(0, 0, 0, 0)
         btnWidget = QWidget()
         btnWidget.setLayout(lay)
@@ -341,8 +341,8 @@ class DatabaseWidget(QWidget):
         if reply == QDialog.Accepted:
             print(reply)
 
-    def __save(self):
-        filename = QFileDialog.getSaveFileName(self, 'Save', '.', 'Excel File (*.xlsx)')
+    def __export(self):
+        filename = QFileDialog.getExportFileName(self, 'Export', '.', 'Excel File (*.xlsx)')
         filename = filename[0]
         if filename:
             workbook = xlsxwriter.Workbook(filename)
