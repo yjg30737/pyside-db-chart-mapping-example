@@ -311,7 +311,7 @@ class DatabaseWidget(QWidget):
     def __import(self):
         filename = QFileDialog.getOpenFileName(self, 'Select the file', '', 'Excel File (*.xlsx)')
         filename = filename[0]
-        if filename[0]:
+        if filename:
             try:
                 con = sqlite3.connect('contacts.sqlite')
                 wb = pd.read_excel(filename, sheet_name=None)
