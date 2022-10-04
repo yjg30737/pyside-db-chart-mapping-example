@@ -10,12 +10,19 @@ You can find out more features and usages below.
 ## Requirements
 * PySide6
 
+## Packages which will be automatically install (All of them are related to import/export as excel feature)
+* xlsxwriter - export as excel
+* pandas - import as excel
+* openpyxl - import as excel
+
+Note: pandas maybe requires more packages than above such as daas.
+
 ## Setup
 `python -m pip install git+https://github.com/yjg30737/pyside-db-chart-mapping-example.git@7d204961cd7462266ab15a20e9c0a62c40ab74fc`
 ### If you want to import/export excel feature
 `python -m pip install git+https://github.com/yjg30737/pyside-db-chart-mapping-example.git --upgrade`
 
-Note: You have to install pandas, xlsxwriter, etc. Not working properly as well. I will deal with it later.
+Note: You have to install pandas, xlsxwriter, etc.
 
 ## Usage/Feature
 * If you want to delete more than one record, holding ctrl and select records one by one or holding shift and select records as consecutive range.
