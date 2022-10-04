@@ -8,12 +8,12 @@ You can save the chart as image/pdf file, you can see the saved file over <a hre
 You can find out more features and usages below. 
 
 ## Requirements
-* PySide6
+* <b>PySide6</b>
 
 ## Packages which will be automatically install (All of them are related to import/export as excel feature)
-* xlsxwriter - export as excel
-* pandas - import as excel
-* openpyxl - import as excel
+* <b>xlsxwriter</b> - export as excel
+* <b>pandas</b> - import as excel
+* <b>openpyxl</b> - import as excel
 
 Note: pandas maybe requires more packages than above such as <b>daas</b>.
 
