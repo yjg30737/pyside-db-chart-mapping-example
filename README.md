@@ -15,7 +15,7 @@ You can find out more features and usages below.
 * pandas - import as excel
 * openpyxl - import as excel
 
-Note: pandas maybe requires more packages than above such as daas.
+Note: pandas maybe requires more packages than above such as <b>daas</b>.
 
 ## Setup
 `python -m pip install git+https://github.com/yjg30737/pyside-db-chart-mapping-example.git@7d204961cd7462266ab15a20e9c0a62c40ab74fc`
