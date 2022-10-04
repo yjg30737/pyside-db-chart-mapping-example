@@ -18,6 +18,9 @@ setup(
     description='PySide6 example of mapping database table(QSqlTableModel based table view) and chart with QVBarModelMapper',
     url='https://github.com/yjg30737/pyside-db-chart-mapping-example.git',
     install_requires=[
-        'PySide6'
+        'PySide6',
+        'xlsxwriter',
+        'pandas',
+        'openpyxl'
     ]
 )

@@ -349,14 +349,15 @@ class DatabaseWidget(QWidget):
             worksheet = workbook.add_worksheet()
             conn = sqlite3.connect('contacts.sqlite')
             c = conn.cursor()
+
             mysel = c.execute(f"select * from {self.__tableName}")
             for i, row in enumerate(mysel):
                 for j, value in enumerate(row):
                     worksheet.write(i, j, row[j])
             workbook.close()
 
-        path = filename.replace('/', '\\')
-        subprocess.Popen(r'explorer /select,"' + path + '"')
+            path = filename.replace('/', '\\')
+            subprocess.Popen(r'explorer /select,"' + path + '"')
 
     def __showResult(self, text):
         # index -1 will be read from all columns
