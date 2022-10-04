@@ -140,8 +140,8 @@ class SqlTableModel(QSqlTableModel):
     added = Signal(int, str)
     updated = Signal(int, str)
     deleted = Signal(list)
-    addedCol = Signal(str)
-    deletedCol = Signal(str)
+    addedCol = Signal()
+    deletedCol = Signal()
 
     def __init__(self, *args, **kwargs):
         super().__init__()
@@ -334,12 +334,19 @@ class DatabaseWidget(QWidget):
             self.__model.setTable(self.__tableName)
             self.__model.select()
             self.__tableView.resizeColumnsToContents()
+            self.__model.addedCol.emit()
 
     def __deleteCol(self):
         dialog = DelColDialog()
         reply = dialog.exec()
         if reply == QDialog.Accepted:
-            print(reply)
+            q = QSqlQuery()
+            q.prepare(f'ALTER TABLE {self.__tableName} DROP COLUMN "{dialog.getColumnName()}"')
+            q.exec()
+            self.__model.setTable(self.__tableName)
+            self.__model.select()
+            self.__tableView.resizeColumnsToContents()
+            self.__model.deletedCol.emit()
 
     def __export(self):
         filename = QFileDialog.getExportFileName(self, 'Export', '.', 'Excel File (*.xlsx)')

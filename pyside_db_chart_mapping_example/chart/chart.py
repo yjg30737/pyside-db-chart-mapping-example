@@ -79,6 +79,8 @@ class ChartWidget(QWidget):
         self.__model.added.connect(self.__addChartXCategory)
         self.__model.updated.connect(self.__updateChartXCategory)
         self.__model.deleted.connect(self.__removeChartXCategory)
+        self.__model.addedCol.connect(self.__addBarSetColumn)
+        self.__model.addedCol.connect(self.__removeBarSetColumn)
 
         # set mapper and series(bars on the chart)
         self.__series = QBarSeries()
@@ -121,10 +123,10 @@ class ChartWidget(QWidget):
         self.__series.attachAxis(self.__axisX)
 
         # define axis Y
-        axisY = QValueAxis()
-        axisY.setTitleText('Score')
-        self.__chart.addAxis(axisY, Qt.AlignLeft)
-        self.__series.attachAxis(axisY)
+        self.__axisY = QValueAxis()
+        self.__axisY.setTitleText('Score')
+        self.__chart.addAxis(self.__axisY, Qt.AlignLeft)
+        self.__series.attachAxis(self.__axisY)
 
         # set hover event to series
         self.__series.hovered.connect(self.__seriesHovered)
@@ -157,6 +159,11 @@ class ChartWidget(QWidget):
             self.__axisX.remove(name)
             del self.__idNameDict[id]
         self.__mapper.setRowCount(self.__model.rowCount())
+
+    def __addBarSetColumn(self):
+        self.__mapper.setLastBarSetColumn(self.__mapper.lastBarSetColumn()+1)
+    def __removeBarSetColumn(self):
+        self.__mapper.setLastBarSetColumn(self.__mapper.lastBarSetColumn()-1)
 
     def __seriesHovered(self, status, idx, barset: QBarSet):
         if status:
