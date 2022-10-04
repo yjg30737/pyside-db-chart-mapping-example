@@ -361,7 +361,7 @@ class DatabaseWidget(QWidget):
             self.__model.deletedCol.emit()
 
     def __export(self):
-        filename = QFileDialog.getOpenFileName(self, 'Export', '.', 'Excel File (*.xlsx)')
+        filename = QFileDialog.getSaveFileName(self, 'Export', '.', 'Excel File (*.xlsx)')
         filename = filename[0]
         if filename:
             workbook = xlsxwriter.Workbook(filename)
