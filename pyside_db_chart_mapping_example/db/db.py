@@ -1,5 +1,7 @@
 import os
 import sqlite3, xlsxwriter
+
+import PySide6
 import pandas as pd
 from typing import Union
 import subprocess
@@ -9,7 +11,7 @@ from PySide6.QtSql import QSqlTableModel, QSqlQuery, QSqlDatabase
 from PySide6.QtSvgWidgets import QSvgWidget
 from PySide6.QtWidgets import QTableView, QWidget, QHBoxLayout, QApplication, QLabel, QAbstractItemView, \
     QGridLayout, QLineEdit, QMessageBox, QStyledItemDelegate, QPushButton, QComboBox, QSpacerItem, QSizePolicy, \
-    QVBoxLayout, QDialog, QFileDialog
+    QVBoxLayout, QDialog, QFileDialog, QSpinBox
 from PySide6.QtCore import Qt, Signal, QSortFilterProxyModel, QModelIndex, QPersistentModelIndex
 
 from pyside_db_chart_mapping_example.db.addColDialog import AddColDialog
@@ -125,16 +127,16 @@ class FilterProxyModel(QSortFilterProxyModel):
 class AlignDelegate(QStyledItemDelegate):
     def initStyleOption(self, option, index):
         super().initStyleOption(option, index)
+        self.installEventFilter(self)
         option.displayAlignment = Qt.AlignCenter
 
     def createEditor(self, parent, option, index):
         editor = super().createEditor(parent, option, index)
         c = index.column()
-        if c in range(4, 7):
+        if c in range(4, 6):
             validator = QIntValidator()
             editor.setValidator(validator)
         return editor
-
 
 class SqlTableModel(QSqlTableModel):
     added = Signal(int, str)
@@ -286,6 +288,11 @@ class DatabaseWidget(QWidget):
         self.__tableView.edit(self.__tableView.currentIndex().siblingAtColumn(1))
         self.__delBtnToggle()
 
+        # align to center
+        delegate = AlignDelegate()
+        for i in range(self.__model.columnCount()):
+            self.__tableView.setItemDelegateForColumn(i, delegate)
+
     def __updated(self, i, r):
         # send updated signal
         self.__model.updated.emit(r.value('id'), r.value('name'))
@@ -336,6 +343,11 @@ class DatabaseWidget(QWidget):
             self.__tableView.resizeColumnsToContents()
             self.__model.addedCol.emit()
 
+            # align to center
+            delegate = AlignDelegate()
+            for i in range(self.__model.columnCount()):
+                self.__tableView.setItemDelegateForColumn(i, delegate)
+
     def __deleteCol(self):
         dialog = DelColDialog()
         reply = dialog.exec()
@@ -349,7 +361,7 @@ class DatabaseWidget(QWidget):
             self.__model.deletedCol.emit()
 
     def __export(self):
-        filename = QFileDialog.getExportFileName(self, 'Export', '.', 'Excel File (*.xlsx)')
+        filename = QFileDialog.getOpenFileName(self, 'Export', '.', 'Excel File (*.xlsx)')
         filename = filename[0]
         if filename:
             workbook = xlsxwriter.Workbook(filename)
