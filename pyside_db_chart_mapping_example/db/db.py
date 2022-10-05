@@ -349,16 +349,17 @@ class DatabaseWidget(QWidget):
                 self.__tableView.setItemDelegateForColumn(i, delegate)
 
     def __deleteCol(self):
-        dialog = DelColDialog()
+        dialog = DelColDialog(self.__tableName)
         reply = dialog.exec()
         if reply == QDialog.Accepted:
-            q = QSqlQuery()
-            q.prepare(f'ALTER TABLE {self.__tableName} DROP COLUMN "{dialog.getColumnName()}"')
-            q.exec()
-            self.__model.setTable(self.__tableName)
-            self.__model.select()
-            self.__tableView.resizeColumnsToContents()
-            self.__model.deletedCol.emit()
+            print(dialog.getColumnNames())
+            # q = QSqlQuery()
+            # q.prepare(f'ALTER TABLE {self.__tableName} DROP COLUMN "{dialog.getColumnNames()}"')
+            # q.exec()
+            # self.__model.setTable(self.__tableName)
+            # self.__model.select()
+            # self.__tableView.resizeColumnsToContents()
+            # self.__model.deletedCol.emit()
 
     def __export(self):
         filename = QFileDialog.getSaveFileName(self, 'Export', '.', 'Excel File (*.xlsx)')

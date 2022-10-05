@@ -1,23 +1,41 @@
+import sqlite3
+
 from PySide6.QtWidgets import QDialog, QGroupBox, QPushButton, QHBoxLayout, QWidget, QVBoxLayout, QCheckBox
 
 
 class DelColDialog(QDialog):
-    def __init__(self):
+    def __init__(self, table_name):
         super().__init__()
-        self.__initUi()
+        self.__initVal()
+        self.__initUi(table_name)
 
-    def __initUi(self):
+    def __initVal(self):
+        self.__chkBoxes = []
+
+    def __initUi(self, table_name):
         lay = QVBoxLayout()
-        lay.addWidget(QCheckBox('Score 1'))
-        lay.addWidget(QCheckBox('Score 2'))
-        lay.addWidget(QCheckBox('Score 3'))
+
+        conn = sqlite3.connect('contacts.sqlite')
+        cur = conn.cursor()
+
+        mysel = cur.execute(f"select * from {table_name}")
+        columnNames = list(map(lambda x: x[0], mysel.description))
+
+        columnNames.remove('ID')
+        columnNames.remove('Name')
+        columnNames.remove('Job')
+        columnNames.remove('Email')
+
+        for columnName in columnNames:
+            chkBox = QCheckBox(columnName)
+            self.__chkBoxes.append(chkBox)
+            lay.addWidget(chkBox)
 
         groupBox = QGroupBox()
         groupBox.setLayout(lay)
 
         self.__okBtn = QPushButton('OK')
         self.__okBtn.clicked.connect(self.accept)
-        self.__okBtn.setEnabled(False)
 
         closeBtn = QPushButton('Close')
         closeBtn.clicked.connect(self.close)
@@ -37,3 +55,6 @@ class DelColDialog(QDialog):
         self.setLayout(lay)
 
         self.setFixedSize(self.sizeHint().width(), self.sizeHint().height())
+
+    def getColumnNames(self):
+        return [checkbox.text() for checkbox in self.__chkBoxes if checkbox.isChecked()]
