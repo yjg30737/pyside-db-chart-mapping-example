@@ -132,7 +132,8 @@ class AlignDelegate(QStyledItemDelegate):
     def createEditor(self, parent, option, index):
         editor = super().createEditor(parent, option, index)
         c = index.column()
-        if c in range(4, 6):
+        # 100000
+        if c > 3:
             validator = QIntValidator()
             editor.setValidator(validator)
         return editor
@@ -145,7 +146,6 @@ class SqlTableModel(QSqlTableModel):
     deletedCol = Signal()
 
     def flags(self, index: Union[QModelIndex, QPersistentModelIndex]) -> Qt.ItemFlags:
-        print('sd')
         if index.column() == 0:
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable
         return super().flags(index)
