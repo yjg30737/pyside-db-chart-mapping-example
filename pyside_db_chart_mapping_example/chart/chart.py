@@ -160,8 +160,12 @@ class ChartWidget(QWidget):
             del self.__idNameDict[id]
         self.__mapper.setRowCount(self.__model.rowCount())
 
+    # fixme barset not added (though barsets list show the result correctly)
     def __addBarSetColumn(self):
         self.__mapper.setLastBarSetColumn(self.__mapper.lastBarSetColumn()+1)
+        print([barset.label() for barset in self.__mapper.series().barSets()])
+        # self.__mapper.setSeries(self.__series)
+        # self.__chartView.repaint()
     def __removeBarSetColumn(self):
         self.__mapper.setLastBarSetColumn(self.__mapper.lastBarSetColumn()-1)
 
