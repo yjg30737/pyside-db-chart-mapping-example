@@ -242,28 +242,9 @@ class DatabaseWidget(QWidget):
             self.__comboBox.addItem(items[i])
         self.__comboBox.currentIndexChanged.connect(self.__currentIndexChanged)
 
-        self.__tableInfo = QTableWidget()
-
-        # TODO show table structure in table info view
-        conn = sqlite3.connect('contacts.sqlite')
-        cur = conn.cursor()
-        result = cur.execute(f'PRAGMA table_info([{self.__tableName}])')
-        result_info = result.fetchall()
-        df = pd.DataFrame(result_info, columns=['cid', 'name', 'type', 'notnull', 'dflt_value', 'pk'])
-        columnNames = df.keys().values
-        values = df.values
-        self.__tableInfo.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.__tableInfo.setColumnCount(len(columnNames))
-        self.__tableInfo.setRowCount(len(values))
-
-        for i in range(len(columnNames)):
-            self.__tableInfo.setHorizontalHeaderItem(i, QTableWidgetItem(columnNames[i]))
-        for i in range(len(values)):
-            for j in range(len(values[i])):
-                self.__tableInfo.setItem(i, j, QTableWidgetItem(str(values[i][j])))
-
-        for i in range(self.__tableInfo.columnCount()):
-            self.__tableInfo.setItemDelegateForColumn(i, delegate)
+        # show table info
+        self.__tableInfoWidget = QTableWidget()
+        self.__setTableInfo(schema_name='contacts.sqlite', table_name=self.__tableName)
 
         # set layout
         lay = QHBoxLayout()
@@ -285,7 +266,7 @@ class DatabaseWidget(QWidget):
         lay.addWidget(btnWidget)
         lay.addWidget(self.__tableView)
         lay.addWidget(QLabel('Table Info'))
-        lay.addWidget(self.__tableInfo)
+        lay.addWidget(self.__tableInfoWidget)
 
         self.setLayout(lay)
 
@@ -294,6 +275,28 @@ class DatabaseWidget(QWidget):
 
         # init delete button enabled
         self.__delBtnToggle()
+
+    def __setTableInfo(self, schema_name: str, table_name: str):
+        conn = sqlite3.connect('contacts.sqlite')
+        cur = conn.cursor()
+        result = cur.execute(f'PRAGMA table_info([{self.__tableName}])')
+        result_info = result.fetchall()
+        df = pd.DataFrame(result_info, columns=['cid', 'name', 'type', 'notnull', 'dflt_value', 'pk'])
+        columnNames = df.keys().values
+        values = df.values
+        self.__tableInfoWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.__tableInfoWidget.setColumnCount(len(columnNames))
+        self.__tableInfoWidget.setRowCount(len(values))
+
+        for i in range(len(columnNames)):
+            self.__tableInfoWidget.setHorizontalHeaderItem(i, QTableWidgetItem(columnNames[i]))
+        for i in range(len(values)):
+            for j in range(len(values[i])):
+                self.__tableInfoWidget.setItem(i, j, QTableWidgetItem(str(values[i][j])))
+
+        delegate = AlignDelegate()
+        for i in range(self.__tableInfoWidget.columnCount()):
+            self.__tableInfoWidget.setItemDelegateForColumn(i, delegate)
 
     def __delBtnToggle(self):
         self.__delBtn.setEnabled(len(self.__tableView.selectedIndexes()) > 0)
