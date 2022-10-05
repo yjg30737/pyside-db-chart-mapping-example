@@ -77,7 +77,7 @@ I just want to figure it out on my own.
 Another glitch i found is that you have to add more than one if you add 1 to the last column of the mapper(QVBarModelMapper).
 
 ```python
-    self.__mapper.setLastBarSetColumn(self.__mapper.lastBarSetColumn()+2)
+self.__mapper.setLastBarSetColumn(self.__mapper.lastBarSetColumn()+2)
 ```
 
 I don't even know what's going on here.
