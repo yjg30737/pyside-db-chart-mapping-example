@@ -33,6 +33,8 @@ Note: You have to install pandas, xlsxwriter, etc.
 * You can save the chart as an image/pdf file.
 * If you put the mouse cursor on the bar, barset's border color will be changed. If you select/click one of the bar, its background color will be changed and text browser will show the bar's info. If cursor leaves, border color will be restored as normal.
 * You can change each color of the bar, choose to set the animation of chart in the settings dialog.
+* Import/export excel file
+* Being able to view the table info
 
 ## Example
 ```python
