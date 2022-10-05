@@ -127,7 +127,6 @@ class FilterProxyModel(QSortFilterProxyModel):
 class AlignDelegate(QStyledItemDelegate):
     def initStyleOption(self, option, index):
         super().initStyleOption(option, index)
-        self.installEventFilter(self)
         option.displayAlignment = Qt.AlignCenter
 
     def createEditor(self, parent, option, index):
@@ -145,10 +144,8 @@ class SqlTableModel(QSqlTableModel):
     addedCol = Signal()
     deletedCol = Signal()
 
-    def __init__(self, *args, **kwargs):
-        super().__init__()
-        
     def flags(self, index: Union[QModelIndex, QPersistentModelIndex]) -> Qt.ItemFlags:
+        print('sd')
         if index.column() == 0:
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable
         return super().flags(index)
@@ -287,11 +284,6 @@ class DatabaseWidget(QWidget):
         # make the record editable right after being added
         self.__tableView.edit(self.__tableView.currentIndex().siblingAtColumn(1))
         self.__delBtnToggle()
-
-        # align to center
-        delegate = AlignDelegate()
-        for i in range(self.__model.columnCount()):
-            self.__tableView.setItemDelegateForColumn(i, delegate)
 
     def __updated(self, i, r):
         # send updated signal
