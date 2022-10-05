@@ -79,7 +79,7 @@ class ChartWidget(QWidget):
         self.__model.added.connect(self.__addChartXCategory)
         self.__model.updated.connect(self.__updateChartXCategory)
         self.__model.deleted.connect(self.__removeChartXCategory)
-        self.__model.addedCol.connect(self.__addBarSetColumn)
+        self.__model.addedCol.connect(self.__addColToSeries)
         self.__model.addedCol.connect(self.__removeBarSetColumn)
 
         # set mapper and series(bars on the chart)
@@ -93,6 +93,7 @@ class ChartWidget(QWidget):
         self.__mapper.setRowCount(self.__model.rowCount())
         self.__mapper.setSeries(self.__series)
         self.__mapper.setModel(self.__model)
+        # self.__mapper.lastBarSetColumnChanged.connect(self.__addBarSetColumn)
         self.__chart.addSeries(self.__series)
 
         # get name attributes
@@ -161,11 +162,9 @@ class ChartWidget(QWidget):
         self.__mapper.setRowCount(self.__model.rowCount())
 
     # fixme barset not added (though barsets list show the result correctly)
-    def __addBarSetColumn(self):
-        self.__mapper.setLastBarSetColumn(self.__mapper.lastBarSetColumn()+1)
-        print([barset.label() for barset in self.__mapper.series().barSets()])
-        # self.__mapper.setSeries(self.__series)
-        # self.__chartView.repaint()
+    def __addColToSeries(self):
+        self.__mapper.setLastBarSetColumn(self.__mapper.lastBarSetColumn()+2)
+
     def __removeBarSetColumn(self):
         self.__mapper.setLastBarSetColumn(self.__mapper.lastBarSetColumn()-1)
 
