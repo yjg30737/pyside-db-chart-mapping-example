@@ -161,7 +161,6 @@ class ChartWidget(QWidget):
             del self.__idNameDict[id]
         self.__mapper.setRowCount(self.__model.rowCount())
 
-    # fixme barset not added (though barsets list show the result correctly)
     def __addColToSeries(self):
         self.__mapper.setLastBarSetColumn(self.__mapper.lastBarSetColumn()+2)
 

@@ -348,18 +348,19 @@ class DatabaseWidget(QWidget):
             for i in range(self.__model.columnCount()):
                 self.__tableView.setItemDelegateForColumn(i, delegate)
 
+    # fixme sqlite doesn't support drop column, need to find another way out
     def __deleteCol(self):
         dialog = DelColDialog(self.__tableName)
         reply = dialog.exec()
         if reply == QDialog.Accepted:
             print(dialog.getColumnNames())
-            # q = QSqlQuery()
-            # q.prepare(f'ALTER TABLE {self.__tableName} DROP COLUMN "{dialog.getColumnNames()}"')
-            # q.exec()
-            # self.__model.setTable(self.__tableName)
-            # self.__model.select()
-            # self.__tableView.resizeColumnsToContents()
-            # self.__model.deletedCol.emit()
+            q = QSqlQuery()
+            q.prepare(f'ALTER TABLE {self.__tableName} DROP COLUMN Score 1, Score 2')
+            q.exec()
+            self.__model.setTable(self.__tableName)
+            self.__model.select()
+            self.__tableView.resizeColumnsToContents()
+            self.__model.deletedCol.emit()
 
     def __export(self):
         filename = QFileDialog.getSaveFileName(self, 'Export', '.', 'Excel File (*.xlsx)')
