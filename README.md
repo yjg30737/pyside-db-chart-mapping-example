@@ -53,15 +53,15 @@ if __name__ == "__main__":
 
 Result
 
-![image](https://user-images.githubusercontent.com/55078043/193486856-9a05dc68-c804-4c4a-ae92-02c8cd674cd1.png)
+![image](https://user-images.githubusercontent.com/55078043/193983272-8689188f-b492-44a4-982a-ae6d6dd7d59e.png)
 
 You don't have to care about left check box list. I'm still working on it.
 
-![image](https://user-images.githubusercontent.com/55078043/193398772-4f869a40-fa5f-4329-99ad-7916abd985a5.png)
+![image](https://user-images.githubusercontent.com/55078043/193983236-7e5522fd-0cd9-42d7-93a1-f2266691bb51.png)
 
 If you place the mouse cursor on one of the bar, barset border's color will be changed as i mentioned before. In this case, border color turns to be red.
 
-Click the bar will change the bar's background color and show the bar's basic info on the text browser. In this case, background color turns to be darkblue.
+Click the bar will change the bar's background color and show the bar's basic info on the text browser. In this case, background color turns to be green.
 
 ## See Also
 * <a href="https://doc.qt.io/qt-6/qtcharts-barmodelmapper-example.html">BarModelMapper Example</a> - table(not sql-based table) and chart mapping example in Qt documentation
