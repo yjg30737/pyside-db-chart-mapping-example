@@ -66,10 +66,18 @@ Click the bar will change the bar's background color and show the bar's basic in
 * <a href="https://github.com/yjg30737/pyside-database-chart-example">pyside-database-chart-example</a> - non-mapping version (i tried to map each other on my own, but failed)
 
 ## Note
-I'm struggling with the problem that item is not added more than one after table was empty. 
+I'm struggling with the problem that item is not added more than one after table was empty.
 
 After much research i convince this is gotta be glitch.
 
 Don't want to report this to Qt however. Someone please do it for me. 
 
 I just want to figure it out on my own. 
+
+Another glitch i found is that you have to add more than one if you add 1 to the last column of the mapper(QVBarModelMapper).
+
+```python
+    self.__mapper.setLastBarSetColumn(self.__mapper.lastBarSetColumn()+2)
+```
+
+I don't even know what's going on here.
