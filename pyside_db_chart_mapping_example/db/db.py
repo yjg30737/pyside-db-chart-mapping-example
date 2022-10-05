@@ -11,8 +11,9 @@ from PySide6.QtSql import QSqlTableModel, QSqlQuery, QSqlDatabase
 from PySide6.QtSvgWidgets import QSvgWidget
 from PySide6.QtWidgets import QTableView, QWidget, QHBoxLayout, QApplication, QLabel, QAbstractItemView, \
     QGridLayout, QLineEdit, QMessageBox, QStyledItemDelegate, QPushButton, QComboBox, QSpacerItem, QSizePolicy, \
-    QVBoxLayout, QDialog, QFileDialog, QSpinBox
-from PySide6.QtCore import Qt, Signal, QSortFilterProxyModel, QModelIndex, QPersistentModelIndex
+    QVBoxLayout, QDialog, QFileDialog, QTableWidget, QTableWidgetItem
+from PySide6.QtCore import Qt, Signal, QSortFilterProxyModel, QModelIndex, QPersistentModelIndex, \
+    QAbstractTableModel
 
 from pyside_db_chart_mapping_example.db.addColDialog import AddColDialog
 from pyside_db_chart_mapping_example.db.delColDialog import DelColDialog
@@ -151,6 +152,14 @@ class SqlTableModel(QSqlTableModel):
         return super().flags(index)
 
 
+class TableInfoModel(QAbstractTableModel):
+
+    def rowCount(self, parent: Union[PySide6.QtCore.QModelIndex, PySide6.QtCore.QPersistentModelIndex] = ...) -> int:
+        return super().rowCount(parent)
+
+    def columnCount(self, parent: Union[PySide6.QtCore.QModelIndex, PySide6.QtCore.QPersistentModelIndex] = ...) -> int:
+        return super().rowCount(parent)
+
 class DatabaseWidget(QWidget):
 
     def __init__(self):
@@ -233,6 +242,29 @@ class DatabaseWidget(QWidget):
             self.__comboBox.addItem(items[i])
         self.__comboBox.currentIndexChanged.connect(self.__currentIndexChanged)
 
+        self.__tableInfo = QTableWidget()
+
+        # TODO show table structure in table info view
+        conn = sqlite3.connect('contacts.sqlite')
+        cur = conn.cursor()
+        result = cur.execute(f'PRAGMA table_info([{self.__tableName}])')
+        result_info = result.fetchall()
+        df = pd.DataFrame(result_info, columns=['cid', 'name', 'type', 'notnull', 'dflt_value', 'pk'])
+        columnNames = df.keys().values
+        values = df.values
+        self.__tableInfo.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.__tableInfo.setColumnCount(len(columnNames))
+        self.__tableInfo.setRowCount(len(values))
+
+        for i in range(len(columnNames)):
+            self.__tableInfo.setHorizontalHeaderItem(i, QTableWidgetItem(columnNames[i]))
+        for i in range(len(values)):
+            for j in range(len(values[i])):
+                self.__tableInfo.setItem(i, j, QTableWidgetItem(str(values[i][j])))
+
+        for i in range(self.__tableInfo.columnCount()):
+            self.__tableInfo.setItemDelegateForColumn(i, delegate)
+
         # set layout
         lay = QHBoxLayout()
         lay.addWidget(lbl)
@@ -252,6 +284,8 @@ class DatabaseWidget(QWidget):
         lay = QVBoxLayout()
         lay.addWidget(btnWidget)
         lay.addWidget(self.__tableView)
+        lay.addWidget(QLabel('Table Info'))
+        lay.addWidget(self.__tableInfo)
 
         self.setLayout(lay)
 
@@ -340,19 +374,31 @@ class DatabaseWidget(QWidget):
             for i in range(self.__model.columnCount()):
                 self.__tableView.setItemDelegateForColumn(i, delegate)
 
-    # fixme sqlite doesn't support drop column, need to find another way out
     def __deleteCol(self):
         dialog = DelColDialog(self.__tableName)
         reply = dialog.exec()
         if reply == QDialog.Accepted:
-            print(dialog.getColumnNames())
-            q = QSqlQuery()
-            q.prepare(f'ALTER TABLE {self.__tableName} DROP COLUMN Score 1, Score 2')
-            q.exec()
-            self.__model.setTable(self.__tableName)
-            self.__model.select()
-            self.__tableView.resizeColumnsToContents()
-            self.__model.deletedCol.emit()
+            columnNamesToRemove = dialog.getColumnNames()
+            conn = sqlite3.connect('contacts.sqlite')
+            cur = conn.cursor()
+
+            # choose the column names except for ones which are supposed to be removed
+            mysel = cur.execute(f"select * from {self.__tableName}")
+            columnNames = list(map(lambda x: x[0], mysel.description))
+            columnNames = list(filter(lambda c: c not in columnNamesToRemove, columnNames))
+
+            # q = QSqlQuery()
+            # # TODO check if the name which is about to be set exists
+            # q.prepare(f'ALTER TABLE {self.__tableName} RENAME TO {self.__tableName}2')
+            # q.exec()
+            # # TODO refactoring this part
+            # q.prepare(f'CREATE TABLE {self.__tableName}')
+            # q.exec()
+
+            # self.__model.setTable(self.__tableName)
+            # self.__model.select()
+            # self.__tableView.resizeColumnsToContents()
+            # self.__model.deletedCol.emit()
 
     def __export(self):
         filename = QFileDialog.getSaveFileName(self, 'Export', '.', 'Excel File (*.xlsx)')
