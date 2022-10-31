@@ -151,15 +151,6 @@ class SqlTableModel(QSqlTableModel):
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable
         return super().flags(index)
 
-
-class TableInfoModel(QAbstractTableModel):
-
-    def rowCount(self, parent: Union[PySide6.QtCore.QModelIndex, PySide6.QtCore.QPersistentModelIndex] = ...) -> int:
-        return super().rowCount(parent)
-
-    def columnCount(self, parent: Union[PySide6.QtCore.QModelIndex, PySide6.QtCore.QPersistentModelIndex] = ...) -> int:
-        return super().rowCount(parent)
-
 class DatabaseWidget(QWidget):
 
     def __init__(self):
